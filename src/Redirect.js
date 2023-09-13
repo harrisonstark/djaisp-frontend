@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { getQueryParams } from './utils/Utils';
+import axios from 'axios';
 import Cookies from 'js-cookie';
 
 function Redirect() {
@@ -12,7 +13,13 @@ function Redirect() {
       Cookies.set("loggedIn", 'true', { path: "/" });
       Cookies.set("code", code, { path: "/" });
     }
-    window.location.href = "/";
+    const response = axios.get('http://localhost:8989/healthcheck')
+      .then((response) => {
+        window.location.href = "/";
+      })
+      .catch((error) => {
+        console.error('Error fetching healthcheck:', error);
+      });
   }, []);
 
   const divStyle = {
