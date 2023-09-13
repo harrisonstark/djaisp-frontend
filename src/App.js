@@ -16,7 +16,7 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
+          TODO setup frontend with listening and chat input
         </a>
         <SpotifyButton />
       </header>

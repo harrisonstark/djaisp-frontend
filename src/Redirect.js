@@ -12,10 +12,10 @@ function Redirect() {
     if(code && state && Cookies.get('state') === state){
       Cookies.set("loggedIn", 'true', { path: "/" });
     }
-    axios.get(`http://localhost:8989/get_tokens?code=${code}`)
+    axios.get(`http://localhost:8989/authorize?code=${code}`)
       .then((response) => {
-        console.log(response);
-        //window.location.href = "/";
+        window.location.href = "/";
+        // TODO store user_id and email as cookies, set loggedIn = true, otherwise send to error page?
       })
       .catch((error) => {
         console.error('Error generating tokens:', error);
