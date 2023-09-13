@@ -11,14 +11,14 @@ function Redirect() {
     const code = queryParams['code'];
     if(code && state && Cookies.get('state') === state){
       Cookies.set("loggedIn", 'true', { path: "/" });
-      Cookies.set("code", code, { path: "/" });
     }
-    const response = axios.get('http://localhost:8989/healthcheck')
+    axios.get(`http://localhost:8989/get_tokens?code=${code}`)
       .then((response) => {
-        window.location.href = "/";
+        console.log(response);
+        //window.location.href = "/";
       })
       .catch((error) => {
-        console.error('Error fetching healthcheck:', error);
+        console.error('Error generating tokens:', error);
       });
   }, []);
 
