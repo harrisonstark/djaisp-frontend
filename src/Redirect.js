@@ -10,16 +10,17 @@ function Redirect() {
     const state = queryParams['state'];
     const code = queryParams['code'];
     if(code && state && Cookies.get('state') === state){
-      Cookies.set("loggedIn", 'true', { path: "/" });
+        axios.get(`http://localhost:8989/authorize?code=${code}`)
+        .then((response) => {
+            Cookies.set("loggedIn", 'true', { path: "/" });
+            Cookies.set("user_id", response.data.user_id, { path: "/" });
+            Cookies.set("email", response.data.email, { path: "/" });
+            window.location.href = "/";
+        })
+        .catch((error) => {
+            console.error('TODO send user to error page and ask to try again', error);
+        });
     }
-    axios.get(`http://localhost:8989/authorize?code=${code}`)
-      .then((response) => {
-        window.location.href = "/";
-        // TODO store user_id and email as cookies, set loggedIn = true, otherwise send to error page?
-      })
-      .catch((error) => {
-        console.error('Error generating tokens:', error);
-      });
   }, []);
 
   const divStyle = {
