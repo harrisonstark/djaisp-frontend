@@ -1,13 +1,28 @@
+import { useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import LoginButton from './components/LoginButton'
+import { getQueryParams } from './utils/Utils';
+import Cookies from 'js-cookie';
 
 function App() {
+  useEffect(() => {
+    const currentUrl = window.location.href;
+    const queryParams = getQueryParams(currentUrl);
+    const state = queryParams['state'];
+    const code = queryParams['code'];
+    if(code && state && Cookies.get('state') === state){
+      Cookies.set("loggedIn", 'true', { path: "/" });
+      window.location.href = "/";
+    }
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Main page.
         </p>
         <a
           className="App-link"
@@ -17,6 +32,7 @@ function App() {
         >
           Learn React
         </a>
+        <LoginButton />
       </header>
     </div>
   );
