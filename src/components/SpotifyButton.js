@@ -4,7 +4,7 @@ import { generateRandomString } from '../utils/Utils';
 import Cookies from 'js-cookie';
 
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
-const REDIRECT_URI = 'http://localhost:9090';
+const REDIRECT_URI = 'http://localhost:9090/redirect';
 
 class LoginButton extends Component {
   constructor(props) {

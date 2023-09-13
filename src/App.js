@@ -1,22 +1,8 @@
-import { useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import LoginButton from './components/LoginButton'
-import { getQueryParams } from './utils/Utils';
-import Cookies from 'js-cookie';
+import SpotifyButton from './components/SpotifyButton'
 
 function App() {
-  useEffect(() => {
-    const currentUrl = window.location.href;
-    const queryParams = getQueryParams(currentUrl);
-    const state = queryParams['state'];
-    const code = queryParams['code'];
-    if(code && state && Cookies.get('state') === state){
-      Cookies.set("loggedIn", 'true', { path: "/" });
-      window.location.href = "/";
-    }
-  }, []);
-
   return (
     <div className="App">
       <header className="App-header">
@@ -32,7 +18,7 @@ function App() {
         >
           Learn React
         </a>
-        <LoginButton />
+        <SpotifyButton />
       </header>
     </div>
   );
