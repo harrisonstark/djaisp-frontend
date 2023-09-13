@@ -10,6 +10,7 @@ function Redirect() {
     const code = queryParams['code'];
     if(code && state && Cookies.get('state') === state){
       Cookies.set("loggedIn", 'true', { path: "/" });
+      Cookies.set("code", code, { path: "/" });
     }
     window.location.href = "/";
   }, []);
