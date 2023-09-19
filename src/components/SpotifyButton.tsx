@@ -1,12 +1,13 @@
-import React, { Component } from 'react';
+import React from 'react';
 import querystring from 'querystring';
 import { generateRandomString } from '../utils/Utils';
+import {Button} from './ui/button'
 import Cookies from 'js-cookie';
 
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
 const REDIRECT_URI = 'http://localhost:9090/redirect';
 
-class LoginButton extends Component {
+class LoginButton extends React.Component<{}, {loggedIn: boolean}> {
   constructor(props) {
     super(props);
 
@@ -42,9 +43,9 @@ class LoginButton extends Component {
     return (
       <div>
         {this.state.loggedIn ? (
-          <button onClick={this.handleLogoutClick}>Logout</button>
+          <Button onClick={this.handleLogoutClick}>Logout</Button>
         ) : (
-          <button onClick={this.handleLoginClick}>Login with Spotify</button>
+          <Button onClick={this.handleLoginClick}>Login with Spotify</Button>
         )}
       </div>
     );
