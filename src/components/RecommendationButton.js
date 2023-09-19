@@ -12,7 +12,11 @@ function RecommendationButton() {
       const response = await axios.get(`http://localhost:8989/get_recommendation?user_id=${user_id}&email=${email}`);
       const data = response.data; // Replace with the actual data you expect from your API
       console.log(data);
-      setDisplayText(JSON.stringify(data)); // Update the state with the fetched data
+      let songs = [];
+      for(let track of data['tracks']){
+        songs.push(track['name'])
+      }
+      setDisplayText(songs.toString()); // Update the state with the fetched data
     } catch (error) {
       console.error('Error fetching data:', error);
     }
