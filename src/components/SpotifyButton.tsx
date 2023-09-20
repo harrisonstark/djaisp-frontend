@@ -3,6 +3,7 @@ import querystring from 'querystring';
 import { generateRandomString } from '../utils/Utils';
 import {Button} from './ui/button'
 import Cookies from 'js-cookie';
+import {BsSpotify} from 'react-icons/bs'
 
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
 const REDIRECT_URI = 'http://localhost:9090/redirect';
@@ -45,7 +46,11 @@ class LoginButton extends React.Component<{}, {loggedIn: boolean}> {
         {this.state.loggedIn ? (
           <Button onClick={this.handleLogoutClick}>Logout</Button>
         ) : (
-          <Button onClick={this.handleLoginClick}>Login with Spotify</Button>
+          <Button onClick={this.handleLoginClick} 
+          className='flex justify-center items-center font-bold w-full'>
+            <BsSpotify size={22} className='mr-3'/>
+            <p>Login with Spotify</p>
+          </Button>
         )}
       </div>
     );
