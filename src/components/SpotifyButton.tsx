@@ -20,7 +20,7 @@ class LoginButton extends React.Component<{}, {loggedIn: boolean}> {
   handleLoginClick = () => {
     const state = generateRandomString(16);
     Cookies.set("state", state, { path: "/" });
-    const scope = 'user-read-private user-read-email user-read-playback-state user-modify-playback-state user-read-currently-playing streaming';
+    const scope = 'streaming user-read-private user-read-email';
 
     const queryParams = {
       response_type: 'code',
@@ -37,6 +37,8 @@ class LoginButton extends React.Component<{}, {loggedIn: boolean}> {
 
   handleLogoutClick = () => {
     Cookies.set("loggedIn", 'false', { path: "/" });
+    Cookies.set("email", '', { path: "/" });
+    Cookies.set("user_id", '', { path: "/" });
     window.location.href = "/";
   }
 
