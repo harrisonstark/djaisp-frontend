@@ -1,6 +1,7 @@
-import { access } from 'fs';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
+import VolumeSlider from './VolumeSlider';
 
 declare global {
     interface Window {
@@ -24,15 +25,27 @@ const track = {
 }
 
 function WebPlayback(props) {
-
     const [is_paused, setPaused] = useState(false);
     const [is_active, setActive] = useState(false);
     const [player, setPlayer] = useState(undefined);
     const [current_track, setTrack] = useState(track);
     const [device_id, setDeviceId] = useState('');
+    const [current_volume, setCurrentVolume] = useState(Cookies.get("volume") || 0.5);
 
+    const playerRef = useRef(null);
+
+    // Callback function to receive the volume value from VolumeSlider
+    const handleVolumeChange = (newVolume) => {
+        if (playerRef.current) {
+            playerRef.current.setVolume(newVolume).then(() => {
+                console.log('Volume updated!', newVolume);
+            });
+        }
+        setCurrentVolume(newVolume);
+    };
+
+    // MAKE SPOTIFY PLAYER
     useEffect(() => {
-
         const script = document.createElement("script");
         script.src = "https://sdk.scdn.co/spotify-player.js";
         script.async = true;
@@ -42,10 +55,11 @@ function WebPlayback(props) {
         window.onSpotifyWebPlaybackSDKReady = () => {
 
             const player = new window.Spotify.Player({
-                name: 'Web Playback SDK',
+                name: 'DJAISP',
                 getOAuthToken: cb => { cb(props.token); },
-                volume: 0.5
+                volume: current_volume
             });
+            playerRef.current = player;
             setPlayer(player);
 
             player.addListener('ready', ({ device_id }) => {
@@ -55,6 +69,7 @@ function WebPlayback(props) {
 
             player.addListener('not_ready', ({ device_id }) => {
                 console.log('Device ID has gone offline', device_id);
+                setDeviceId("");
             });
 
             player.addListener('player_state_changed', ( state => {
@@ -75,10 +90,31 @@ function WebPlayback(props) {
             player.connect();
 
         };
+        
     }, []);
 
-    function callMeMaybe() {
-        const uri = "spotify:track:3TGRqZ0a2l1LRblBkJoaDx";
+    useEffect(() => {
+        const handleBeforeUnload = () => {
+          // Set the cookie to true when the page is about to be closed
+          if (playerRef.current) {
+            playerRef.current.getVolume().then(volume => {
+                Cookies.set("volume", volume, { path: "/" });
+            });
+            playerRef.current.disconnect();
+          }
+        };
+    
+        // Add the "beforeunload" event listener when the component mounts
+        window.addEventListener('beforeunload', handleBeforeUnload);
+    
+        // Remove the event listener when the component unmounts
+        return () => {
+          window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+      }, []);
+    
+
+    function playTracks(uriList) {
         const apiUrl = 'https://api.spotify.com/v1/me/player/play';
 
         const headers = {
@@ -86,18 +122,39 @@ function WebPlayback(props) {
         };
 
         const body = {
-        uris: [uri],
+        uris: uriList,
         device_ids: [device_id]
         };
 
         axios.put(apiUrl, body, { headers })
-        .then(response => {
-            console.log('Automatically transferred playback', response.data);
+        .then(() => {
             setActive(true);
         })
         .catch(error => {
-            console.error('Playback transfer unsuccessful', error);
+            console.error('Track play unsuccessful', error);
         });
+    }
+
+    function playRandomTracks(limit){
+            const user_id = Cookies.get('user_id');
+            const email = Cookies.get('email');
+            const values = ["acousticness", "danceability", "energy", "instrumentalness", "liveness", "popularity", "speechiness", "valence"];
+            let queryParams = `limit=${limit}&seed_genres=indie-pop`
+            for(let value of values){
+                let num = Math.random();
+                if(value === "popularity"){
+                    num *= 100;
+                    num = Math.floor(num);
+                }
+                queryParams += `&target_${value}=${num}`
+            }
+            axios.get(`http://localhost:8989/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
+            .then((response) => {
+                playTracks(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching data:', error);
+            })
     }
 
     if (!is_active) {
@@ -113,12 +170,14 @@ function WebPlayback(props) {
         };
 
         axios.put(apiUrl, body, { headers })
-        .then(response => {
-            console.log('Automatically transferred playback', response.data);
+        .then(() => {
             setActive(true);
         })
         .catch(error => {
             console.error('Playback transfer unsuccessful', error);
+            if(error.message === "Request failed with status code 401"){
+                console.error("TOKEN RELOAD TIME!!!!!!!!!")
+            }
         });
         return (
             <>
@@ -129,7 +188,6 @@ function WebPlayback(props) {
                 </div>
             </>)
     } else {
-
         return (
             <>
                 <div className="container">
@@ -140,6 +198,10 @@ function WebPlayback(props) {
                         <div className="now-playing__side">
                             <div className="now-playing__name">{current_track.name}</div>
                             <div className="now-playing__artist">{current_track.artists[0].name}</div>
+
+                            <button className="btn-spotify" onClick={() => { playTracks(["spotify:track:3TGRqZ0a2l1LRblBkJoaDx"]) }} >
+                                CMM
+                            </button>
 
                             <button className="btn-spotify" onClick={() => { player.previousTrack() }} >
                                 &lt;&lt;
@@ -153,9 +215,11 @@ function WebPlayback(props) {
                                 &gt;&gt;
                             </button>
 
-                            <button className="btn-spotify" onClick={() => { callMeMaybe() }} >
-                                CMM
+                            <button className="btn-spotify" onClick={() => { playRandomTracks(10) }} >
+                                ++
                             </button>
+                            
+                            <VolumeSlider onVolumeChange={handleVolumeChange} />
                         </div>
                     </div>
                 </div>

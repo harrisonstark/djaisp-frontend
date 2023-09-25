@@ -1,7 +1,6 @@
 import LoginCard from './components/LoginCard'
 import axios from 'axios'
 import Cookies from 'js-cookie';
-import RecommendationButton from './components/RecommendationButton'
 import SpotifyButton from './components/SpotifyButton'
 import WebPlayer from './components/WebPlayer'
 import React, { useEffect, useState } from 'react';
@@ -26,10 +25,7 @@ function App() {
         <div className="button-container" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh'}}>
           {token !== '' && <WebPlayer token={token}/>}
           {Cookies.get('loggedIn') === 'true' ? (
-          <>
             <SpotifyButton />
-            <RecommendationButton />
-          </>
           ) : (
             <LoginCard />
           )
