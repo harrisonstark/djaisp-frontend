@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import VolumeSlider from './VolumeSlider';
+import PositionSlider from './PositionSlider';
 
 declare global {
     interface Window {
@@ -30,18 +31,25 @@ function WebPlayback(props) {
     const [player, setPlayer] = useState(undefined);
     const [current_track, setTrack] = useState(track);
     const [device_id, setDeviceId] = useState('');
-    const [current_volume, setCurrentVolume] = useState(Cookies.get("volume") || 0.5);
+    const [current_volume, setVolume] = useState(Cookies.get("volume") || 0.5);
+    const [position, setPosition] = useState(0);
+    const [duration, setDuration] = useState(0);
 
     const playerRef = useRef(null);
 
     // Callback function to receive the volume value from VolumeSlider
     const handleVolumeChange = (newVolume) => {
         if (playerRef.current) {
-            playerRef.current.setVolume(newVolume).then(() => {
-                console.log('Volume updated!', newVolume);
-            });
+            playerRef.current.setVolume(newVolume);
         }
-        setCurrentVolume(newVolume);
+        setVolume(newVolume);
+    };
+
+    const handlePositionChange = (newPosition) => {
+        if (playerRef.current) {
+            playerRef.current.seek(newPosition);
+        }
+        setPosition(newPosition);
     };
 
     // MAKE SPOTIFY PLAYER
@@ -80,9 +88,11 @@ function WebPlayback(props) {
 
                 setTrack(state.track_window.current_track);
                 setPaused(state.paused);
+                setPosition(state.position);
+                setDuration(state.duration);
 
                 player.getCurrentState().then( state => { 
-                    (!state)? setActive(false) : setActive(true) 
+                    (!state)? setActive(false) : setActive(true)
                 });
 
             }));
@@ -111,8 +121,36 @@ function WebPlayback(props) {
         return () => {
           window.removeEventListener('beforeunload', handleBeforeUnload);
         };
-      }, []);
+    }, []);
     
+    let counting;
+
+    const add = () => {
+      setPosition((prevPosition) => prevPosition + 1000);
+    };
+  
+    const play = () => {
+      if (!counting) {
+        counting = setInterval(add, 1000);
+      }
+    };
+  
+    const stop = () => {
+      clearInterval(counting);
+      counting = null;
+    };
+  
+    useEffect(() => {
+      if (!is_paused) {
+        play();
+      } else {
+        stop();
+      }
+      // Clean up the timer when the component unmounts
+      return () => {
+        stop();
+      };
+    }, [is_paused]);
 
     function playTracks(uriList) {
         const apiUrl = 'https://api.spotify.com/v1/me/player/play';
@@ -218,7 +256,7 @@ function WebPlayback(props) {
                             <button className="btn-spotify" onClick={() => { playRandomTracks(10) }} >
                                 ++
                             </button>
-                            
+                            <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position} />
                             <VolumeSlider onVolumeChange={handleVolumeChange} />
                         </div>
                     </div>
