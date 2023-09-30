@@ -5,7 +5,6 @@ import VolumeSlider from './VolumeSlider';
 import PositionSlider from './PositionSlider';
 import ChatBox from './ChatBox';
 import { logOut, removeDuplicates } from '../utils/Utils';
-import { error } from 'console';
 
 declare global {
     interface Window {
