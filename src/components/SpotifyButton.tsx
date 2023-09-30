@@ -1,6 +1,6 @@
 import React from 'react';
 import querystring from 'querystring';
-import { generateRandomString } from '../utils/Utils';
+import { generateRandomString, logOut } from '../utils/Utils';
 import {Button} from './ui/button'
 import Cookies from 'js-cookie';
 import {BsSpotify} from 'react-icons/bs'
@@ -36,11 +36,7 @@ class LoginButton extends React.Component<{}, {loggedIn: boolean}> {
   };
 
   handleLogoutClick = () => {
-    // TODO: MAKE THIS A UTILS FUNCTION
-    Cookies.set("loggedIn", 'false', { path: "/" });
-    Cookies.set("email", '', { path: "/" });
-    Cookies.set("user_id", '', { path: "/" });
-    window.location.href = "/";
+    logOut();
   }
 
   render() {

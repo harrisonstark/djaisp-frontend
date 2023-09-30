@@ -4,7 +4,8 @@ import Cookies from 'js-cookie';
 import VolumeSlider from './VolumeSlider';
 import PositionSlider from './PositionSlider';
 import ChatBox from './ChatBox';
-import { removeDuplicates } from '../utils/Utils';
+import { logOut, removeDuplicates } from '../utils/Utils';
+import { error } from 'console';
 
 declare global {
     interface Window {
@@ -32,6 +33,8 @@ let prev_track = track;
 let trackList = {};
 
 let counter = 0;
+
+let screenMessage = "Instance not active. Transfer your playback using your Spotify app if it does not automatically.";
 
 function WebPlayback(props) {
     const [is_paused, setPaused] = useState(false);
@@ -74,12 +77,10 @@ function WebPlayback(props) {
             setPlayer(player);
 
             player.addListener('ready', ({ device_id }) => {
-                console.log('Ready with Device ID', device_id);
                 setDeviceId(device_id);
             });
 
             player.addListener('not_ready', ({ device_id }) => {
-                console.log('Device ID has gone offline', device_id);
                 setDeviceId("");
             });
 
@@ -189,7 +190,7 @@ function WebPlayback(props) {
         try {
           const response = await axios.get(apiUrl, { headers });
       
-          const values = ["acousticness", "danceability", "energy", "instrumentalness", "liveness", "speechiness", "valence"];
+          const values = ["danceability", "energy", "instrumentalness", "speechiness", "valence"];
 
           let result = {};
           for (let value of values) {
@@ -247,7 +248,7 @@ function WebPlayback(props) {
         })
     }
 
-    if (!is_active) {
+    useEffect(() => {
         const apiUrl = 'https://api.spotify.com/v1/me/player';
 
         const headers = {
@@ -265,32 +266,31 @@ function WebPlayback(props) {
         })
         .catch(error => {
             if(error.message === "Request failed with status code 404"){
-                console.error("Loading...", error);
+                screenMessage = "Loading...";
             } else if(error.message === "Request failed with status code 401"){
-                console.error("Refreshing token...", error);
+                screenMessage = "Refreshing token, your page will reload, please wait...";
                 axios.put(`http://localhost:8989/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
                 .then(() => {
                     window.location.href = "/";
                 })
                 .catch((error) => {
-                    // TODO: MAKE THIS A UTILS FUNCTION
                     console.error('There was a fatal error, logging user out', error);
-                    Cookies.set("loggedIn", 'false', { path: "/" });
-                    Cookies.set("email", '', { path: "/" });
-                    Cookies.set("user_id", '', { path: "/" });
-                    window.location.href = "/";
+                    logOut();
                 });
             } else if (error.message === "Request failed with status code 403"){
-                console.error("Something broke :( do you have a paid Spotify premium subscription?", error);
+                screenMessage = "Something broke :( do you have a paid Spotify premium subscription?";
             } else {
-                console.error('Playback transfer unsuccessful', error);
+                screenMessage = 'Playback transfer unsuccessful (seriously broke)';
             }
         });
+      }, [device_id]);
+
+    if (!is_active) {
         return (
             <>
                 <div className="container">
                     <div className="main-wrapper">
-                        <b> Instance not active. Transfer your playback using your Spotify app if it does not automatically. </b>
+                        <b> {screenMessage} </b>
                     </div>
                 </div>
             </>)
@@ -299,12 +299,17 @@ function WebPlayback(props) {
             <>
                 <div className="container">
                     <div className="main-wrapper">
-
-                        <img src={current_track.album.images[0].url} className="now-playing__cover" alt="" />
+                       {current_track.album.images[0] ? (
+                            <img src={current_track.album.images[0].url} className="now-playing__cover" alt="" />
+                        ) : (<></>)}
 
                         <div className="now-playing__side">
-                            <div className="now-playing__name">{current_track.name}</div>
-                            <div className="now-playing__artist">{current_track.artists[0].name}</div>
+                        {current_track?.name && current_track?.artists[0]?.name ? (
+                            <>
+                                <div className="now-playing__name">{current_track.name}</div>
+                                <div className="now-playing__artist">{current_track.artists[0].name}</div>
+                            </>
+                        ) : (<></>)}
 
                             <button className="btn-spotify" onClick={() => { playTracks(["spotify:track:3TGRqZ0a2l1LRblBkJoaDx"]) }} >
                                 CMM

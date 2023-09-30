@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie';
+
 export function generateRandomString(length) {
   let result = '';
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -26,4 +28,18 @@ export function getQueryParams(url) {
 
 export function removeDuplicates(arr) {
   return Array.from(new Set(arr));
+}
+
+export function logIn(user_id, email) {
+  Cookies.set("loggedIn", 'true', { path: "/" });
+  Cookies.set("user_id", user_id, { path: "/" });
+  Cookies.set("email", email, { path: "/" });
+  window.location.href = "/";
+}
+
+export function logOut() {
+  Cookies.set("loggedIn", 'false', { path: "/" });
+  Cookies.set("email", '', { path: "/" });
+  Cookies.set("user_id", '', { path: "/" });
+  window.location.href = "/";
 }
