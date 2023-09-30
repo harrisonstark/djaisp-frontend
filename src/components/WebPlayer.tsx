@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import VolumeSlider from './VolumeSlider';
 import PositionSlider from './PositionSlider';
 import ChatBox from './ChatBox';
+import { removeDuplicates } from '../utils/Utils';
 
 declare global {
     interface Window {
@@ -26,7 +27,11 @@ const track = {
     ]
 }
 
-const listeningHistory = []
+let prev_track = track;
+
+let trackList = {};
+
+let counter = 0;
 
 function WebPlayback(props) {
     const [is_paused, setPaused] = useState(false);
@@ -34,23 +39,19 @@ function WebPlayback(props) {
     const [player, setPlayer] = useState(undefined);
     const [current_track, setTrack] = useState(track);
     const [device_id, setDeviceId] = useState('');
-    const [current_volume, setVolume] = useState(Cookies.get("volume") || 0.5);
     const [position, setPosition] = useState(0);
     const [duration, setDuration] = useState(0);
 
-    const playerRef = useRef(null);
-
     // Callback function to receive the volume value from VolumeSlider
     const handleVolumeChange = (newVolume) => {
-        if (playerRef.current) {
-            playerRef.current.setVolume(newVolume);
+        if (player) {
+            player.setVolume(newVolume);
         }
-        setVolume(newVolume);
     };
 
     const handlePositionChange = (newPosition) => {
-        if (playerRef.current) {
-            playerRef.current.seek(newPosition);
+        if (player) {
+            player.seek(newPosition);
         }
         setPosition(newPosition);
     };
@@ -68,9 +69,8 @@ function WebPlayback(props) {
             const player = new window.Spotify.Player({
                 name: 'DJAISP',
                 getOAuthToken: cb => { cb(props.token); },
-                volume: current_volume
+                volume: Cookies.get("volume") || 0.5
             });
-            playerRef.current = player;
             setPlayer(player);
 
             player.addListener('ready', ({ device_id }) => {
@@ -88,7 +88,7 @@ function WebPlayback(props) {
                 if (!state) {
                     return;
                 }
-
+                
                 setTrack(state.track_window.current_track);
                 setPaused(state.paused);
                 setPosition(state.position);
@@ -109,11 +109,11 @@ function WebPlayback(props) {
     useEffect(() => {
         const handleBeforeUnload = () => {
           // Set the cookie to true when the page is about to be closed
-          if (playerRef.current) {
-            playerRef.current.getVolume().then(volume => {
+          if (player) {
+            player.getVolume().then(volume => {
                 Cookies.set("volume", volume, { path: "/" });
             });
-            playerRef.current.disconnect();
+            player.disconnect();
           }
         };
     
@@ -129,7 +129,9 @@ function WebPlayback(props) {
     let counting;
 
     const add = () => {
-      setPosition((prevPosition) => prevPosition + 1000);
+        setPosition((prevPosition) => {
+            return prevPosition + 1000;
+          });
     };
   
     const play = () => {
@@ -155,6 +157,51 @@ function WebPlayback(props) {
       };
     }, [is_paused]);
 
+    useEffect(() => {
+        if(prev_track["id"] !== current_track["id"] && prev_track["name"] !== ""){
+            counter++;
+        }
+        prev_track = current_track;
+        if(counter < 0) {
+            counter = 0;
+        } else if (counter >= Object.keys(trackList).length && Object.keys(trackList).length !== 0) {
+            counter = 0;
+            playRandomTracks();
+        } else {
+            if(Object.keys(trackList).length !== 0){
+                const time_listened = position / duration;
+                try {
+                    trackList[counter]["time_listened"] = time_listened;
+                } catch(error){
+                    console.error(error);
+                }
+            }
+        }
+      }, [current_track]);
+
+      async function getTrackFeatures(uri) {
+        const apiUrl = `https://api.spotify.com/v1/audio-features/${uri}`;
+      
+        const headers = {
+          'Authorization': `Bearer ${props.token}`
+        };
+      
+        try {
+          const response = await axios.get(apiUrl, { headers });
+      
+          const values = ["acousticness", "danceability", "energy", "instrumentalness", "liveness", "speechiness", "valence"];
+
+          let result = {};
+          for (let value of values) {
+            result[value] = response.data[value];
+          }
+          result["time_listened"] = 0;
+          return result;
+        } catch (error) {
+          console.error('Track play unsuccessful', error);
+        }
+      }
+
     function playTracks(uriList) {
         const apiUrl = 'https://api.spotify.com/v1/me/player/play';
 
@@ -168,33 +215,32 @@ function WebPlayback(props) {
         };
 
         axios.put(apiUrl, body, { headers })
-        .then(() => {
-            setActive(true);
+        .then(async () => {
+            trackList = {};
+            counter = 0;
+            prev_track = {name: "", album: {images: [{ url: "" }]}, artists: [{ name: "" }]};
+            for(let i = 0; i < uriList.length; i++){
+                trackList[i] = await getTrackFeatures(uriList[i].split(':')[2]);
+            }
         })
         .catch(error => {
             console.error('Track play unsuccessful', error);
         });
     }
 
-    function playRandomTracks(limit, message){
-        if (message.trim() === '') {
-            return;
-        }
+    function playRandomTracks(message = ""){
         const user_id = Cookies.get('user_id');
         const email = Cookies.get('email');
-        const values = ["acousticness", "danceability", "energy", "instrumentalness", "liveness", "popularity", "speechiness", "valence"];
-        let queryParams = `message=${message}&limit=${limit}&seed_genres=indie-pop`
-        for(let value of values){
-            let num = Math.random();
-            if(value === "popularity"){
-                num *= 100;
-                num = Math.floor(num);
-            }
-            queryParams += `&target_${value}=${num}`
+        let queryParams = ""
+        if (message.trim() === '') {
+            queryParams += `track_list=${JSON.stringify(trackList)}&seed_genres=${Cookies.get("seed_genres")}`
+        } else {
+            queryParams += `message=${message}`
         }
         axios.get(`http://localhost:8989/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
         .then((response) => {
-            playTracks(response.data);
+            Cookies.set("seed_genres", response.data.seed_genres, { path: "/" });
+            playTracks(removeDuplicates(response.data.songs));
         })
         .catch((error) => {
             console.error('Error fetching data:', error);
@@ -264,7 +310,7 @@ function WebPlayback(props) {
                                 CMM
                             </button>
 
-                            <button className="btn-spotify" onClick={() => { player.previousTrack() }} >
+                            <button className="btn-spotify" onClick={() => { player.previousTrack() && counter-- && counter-- }} >
                                 &lt;&lt;
                             </button>
 
@@ -277,7 +323,7 @@ function WebPlayback(props) {
                             </button>
                             <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position} />
                             <VolumeSlider onVolumeChange={handleVolumeChange} />
-                            <ChatBox onSendMessage={(message) => { playRandomTracks(10, message) }}/>
+                            <ChatBox onSendMessage={(message) => { message !== "" && playRandomTracks(message) }}/>
                         </div>
                     </div>
                 </div>
