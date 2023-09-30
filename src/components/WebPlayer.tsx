@@ -3,6 +3,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import VolumeSlider from './VolumeSlider';
 import PositionSlider from './PositionSlider';
+import ChatBox from './ChatBox';
 
 declare global {
     interface Window {
@@ -24,6 +25,8 @@ const track = {
         { name: "" }
     ]
 }
+
+const listeningHistory = []
 
 function WebPlayback(props) {
     const [is_paused, setPaused] = useState(false);
@@ -173,26 +176,29 @@ function WebPlayback(props) {
         });
     }
 
-    function playRandomTracks(limit){
-            const user_id = Cookies.get('user_id');
-            const email = Cookies.get('email');
-            const values = ["acousticness", "danceability", "energy", "instrumentalness", "liveness", "popularity", "speechiness", "valence"];
-            let queryParams = `limit=${limit}&seed_genres=indie-pop`
-            for(let value of values){
-                let num = Math.random();
-                if(value === "popularity"){
-                    num *= 100;
-                    num = Math.floor(num);
-                }
-                queryParams += `&target_${value}=${num}`
+    function playRandomTracks(limit, message){
+        if (message.trim() === '') {
+            return;
+        }
+        const user_id = Cookies.get('user_id');
+        const email = Cookies.get('email');
+        const values = ["acousticness", "danceability", "energy", "instrumentalness", "liveness", "popularity", "speechiness", "valence"];
+        let queryParams = `message=${message}&limit=${limit}&seed_genres=indie-pop`
+        for(let value of values){
+            let num = Math.random();
+            if(value === "popularity"){
+                num *= 100;
+                num = Math.floor(num);
             }
-            axios.get(`http://localhost:8989/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
-            .then((response) => {
-                playTracks(response.data);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            })
+            queryParams += `&target_${value}=${num}`
+        }
+        axios.get(`http://localhost:8989/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
+        .then((response) => {
+            playTracks(response.data);
+        })
+        .catch((error) => {
+            console.error('Error fetching data:', error);
+        })
     }
 
     if (!is_active) {
@@ -212,16 +218,33 @@ function WebPlayback(props) {
             setActive(true);
         })
         .catch(error => {
-            console.error('Playback transfer unsuccessful', error);
-            if(error.message === "Request failed with status code 401"){
-                console.error("TOKEN RELOAD TIME!!!!!!!!!")
+            if(error.message === "Request failed with status code 404"){
+                console.error("Loading...", error);
+            } else if(error.message === "Request failed with status code 401"){
+                console.error("Refreshing token...", error);
+                axios.put(`http://localhost:8989/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
+                .then(() => {
+                    window.location.href = "/";
+                })
+                .catch((error) => {
+                    // TODO: MAKE THIS A UTILS FUNCTION
+                    console.error('There was a fatal error, logging user out', error);
+                    Cookies.set("loggedIn", 'false', { path: "/" });
+                    Cookies.set("email", '', { path: "/" });
+                    Cookies.set("user_id", '', { path: "/" });
+                    window.location.href = "/";
+                });
+            } else if (error.message === "Request failed with status code 403"){
+                console.error("Something broke :( do you have a paid Spotify premium subscription?", error);
+            } else {
+                console.error('Playback transfer unsuccessful', error);
             }
         });
         return (
             <>
                 <div className="container">
                     <div className="main-wrapper">
-                        <b> Instance not active. Transfer your playback using your Spotify app if it does not automatically </b>
+                        <b> Instance not active. Transfer your playback using your Spotify app if it does not automatically. </b>
                     </div>
                 </div>
             </>)
@@ -252,12 +275,9 @@ function WebPlayback(props) {
                             <button className="btn-spotify" onClick={() => { player.nextTrack() }} >
                                 &gt;&gt;
                             </button>
-
-                            <button className="btn-spotify" onClick={() => { playRandomTracks(10) }} >
-                                ++
-                            </button>
                             <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position} />
                             <VolumeSlider onVolumeChange={handleVolumeChange} />
+                            <ChatBox onSendMessage={(message) => { playRandomTracks(10, message) }}/>
                         </div>
                     </div>
                 </div>

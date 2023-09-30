@@ -36,6 +36,7 @@ class LoginButton extends React.Component<{}, {loggedIn: boolean}> {
   };
 
   handleLogoutClick = () => {
+    // TODO: MAKE THIS A UTILS FUNCTION
     Cookies.set("loggedIn", 'false', { path: "/" });
     Cookies.set("email", '', { path: "/" });
     Cookies.set("user_id", '', { path: "/" });
