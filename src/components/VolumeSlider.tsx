@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Cookies from 'js-cookie';
+import { Slider } from "./ui/slider"
+import { BsFillVolumeUpFill } from 'react-icons/bs'
 
 // Define the prop type
 interface VolumeSliderProps {
@@ -17,8 +19,10 @@ function VolumeSlider({ onVolumeChange }: VolumeSliderProps) {
   };
 
   return (
-    <div>
-      <label htmlFor="volumeSlider">Volume:</label>
+    <div className='flex justify-center items-center'>
+      <BsFillVolumeUpFill size={24} />
+      <Slider defaultValue={[0.5]} step={0.01} max={1} onChange={handleVolumeChange} className="w-full px-4"/>
+      {/* <label htmlFor="volumeSlider">Volume:</label>
       <input
         type="range"
         id="volumeSlider"
@@ -29,7 +33,7 @@ function VolumeSlider({ onVolumeChange }: VolumeSliderProps) {
         value={volume.toString()} // Ensure value is a string
         onChange={handleVolumeChange}
       />
-      <span>{Math.round(volume * 100)}%</span>
+      <span>{Math.round(volume * 100)}%</span> */}
     </div>
   );
 }

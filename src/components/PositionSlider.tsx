@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Slider } from "./ui/slider"
 
 // Define the prop type
 interface SongPositionSliderProps {
@@ -17,8 +18,14 @@ function SongPositionSlider({ onPositionChange, duration, position }: SongPositi
   };
 
   return (
-    <div>
-      <label htmlFor="positionSlider">Position in Song:</label>
+    <div className="flex flex-row items-center">
+      <div className='pb-1'>{formatTime(position)}</div>
+      <div className="w-full px-4">
+        <Slider defaultValue={[0]} step={1} max={100} />
+      </div>
+      
+      {/* <Slider defaultValue={[0]} max={duration} step={Math.floor(duration / 1000)} onChange={handlePositionChange}/> */}
+      {/* <label htmlFor="positionSlider">Position in Song:</label>
       <input
         type="range"
         id="positionSlider"
@@ -28,8 +35,8 @@ function SongPositionSlider({ onPositionChange, duration, position }: SongPositi
         step={Math.floor(duration / 1000)}
         value={position.toString()} // Ensure value is a string
         onChange={handlePositionChange}
-      />
-      <span>{formatTime(position)} / {formatTime(duration)}</span>
+      /> */}
+      <div className='pb-1'>{formatTime(duration - position)}</div>
     </div>
   );
 }

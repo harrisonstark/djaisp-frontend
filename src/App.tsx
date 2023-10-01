@@ -11,7 +11,7 @@ function App() {
   useEffect(() => {
 
     async function getToken() {
-      const response = await axios.get(`http://localhost:8989/get_credentials?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
+      const response = await axios.get(`http://localhost:8989/get_credentials?user_id=srl2snyev9no2wualyyt3goj7&email=hstark@ufl.edu`);
       setToken(response.data["access_token"]);
     }
     if(Cookies.get('loggedIn') === 'true'){
@@ -22,12 +22,12 @@ function App() {
 
   return (
       <div className='dark bg-background text-foreground flex h-screen justify-center items-center'>
-        <div className="button-container" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh'}}>
+        <div className="flex flex-col items-center w-full h-screen">
           {token !== '' && <WebPlayer token={token}/>}
           {Cookies.get('loggedIn') === 'true' ? (
             <SpotifyButton />
           ) : (
-            <LoginCard />
+              <LoginCard />
           )
           }
         </div>

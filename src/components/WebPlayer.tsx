@@ -3,6 +3,12 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import VolumeSlider from './VolumeSlider';
 import PositionSlider from './PositionSlider';
+import {BsPlayCircleFill, 
+        BsPauseCircleFill,
+        BsFillSkipStartFill,
+        BsFillSkipEndFill} 
+from 'react-icons/bs'
+
 
 declare global {
     interface Window {
@@ -198,6 +204,8 @@ function WebPlayback(props) {
     if (!is_active) {
         const apiUrl = 'https://api.spotify.com/v1/me/player';
 
+        
+
         const headers = {
         'Authorization': `Bearer ${props.token}`
         };
@@ -206,6 +214,9 @@ function WebPlayback(props) {
         device_ids: [device_id],
         play: false,
         };
+
+        console.log(props.token)
+        console.log(device_id)
 
         axios.put(apiUrl, body, { headers })
         .then(() => {
@@ -219,7 +230,7 @@ function WebPlayback(props) {
         });
         return (
             <>
-                <div className="container">
+                <div>
                     <div className="main-wrapper">
                         <b> Instance not active. Transfer your playback using your Spotify app if it does not automatically </b>
                     </div>
@@ -228,38 +239,74 @@ function WebPlayback(props) {
     } else {
         return (
             <>
-                <div className="container">
-                    <div className="main-wrapper">
-
-                        <img src={current_track.album.images[0].url} className="now-playing__cover" alt="" />
-
-                        <div className="now-playing__side">
-                            <div className="now-playing__name">{current_track.name}</div>
-                            <div className="now-playing__artist">{current_track.artists[0].name}</div>
-
-                            <button className="btn-spotify" onClick={() => { playTracks(["spotify:track:3TGRqZ0a2l1LRblBkJoaDx"]) }} >
-                                CMM
-                            </button>
-
-                            <button className="btn-spotify" onClick={() => { player.previousTrack() }} >
-                                &lt;&lt;
-                            </button>
-
-                            <button className="btn-spotify" onClick={() => { player.togglePlay() }} >
-                                { is_paused ? "PLAY" : "PAUSE" }
-                            </button>
-
-                            <button className="btn-spotify" onClick={() => { player.nextTrack() }} >
-                                &gt;&gt;
-                            </button>
-
-                            <button className="btn-spotify" onClick={() => { playRandomTracks(10) }} >
-                                ++
-                            </button>
-                            <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position} />
-                            <VolumeSlider onVolumeChange={handleVolumeChange} />
+                <div className="w-full">
+                    <div className="py-2 bg-zinc-800 inset-x-0 top-0  flex flex-wrap items-center lg:justify-between sm:justify-center">
+                        <div className="flex flex-row mx-2"> 
+                            <div className='rounded-lg'>
+                                <img src={current_track.album.images[0].url} className="w-16 h-16 bg-blue-400" alt="" />
+                            </div>
+                            <div className="flex flex-col pl-3 justify-center">
+                                <div id="sample-title">{current_track.name}</div>
+                                <div id="sample-artist">{current_track.artists[0].name}</div>
+                            </div>
+                        </div>
+                        <div className="w-1/2 flex flex-row justify-center mx-2">
+                            <div className="flex flex-col w-full justify-center">
+                                <div className='flex flex-row items-center justify-center gap-4 pb-1'>
+                                    <button className="btn-spotify" onClick={() => { player.previousTrack() }} >
+                                        <BsFillSkipStartFill className="hover:fill-zinc-700" size={26} />
+                                    </button>
+                                    <button className="btn-spotify" onClick={() => { player.togglePlay() }} >
+                                        { is_paused ? <BsPlayCircleFill className="hover:fill-zinc-700" size={24}/> : 
+                                        <BsPauseCircleFill className="hover:fill-zinc-700" size={26}/> }
+                                    </button>
+                                    <button className="btn-spotify" onClick={() => { player.nextTrack() }} >
+                                        <BsFillSkipEndFill className="hover:fill-zinc-700" size={26} />
+                                    </button>
+                                </div>
+                                <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position} /> 
+                            </div>
+                        </div>
+                        <div className="w-40 flex flex-row justify-center items-center mx-2"> 
+                            <div className="flex flex-col w-full pl-3 justify-center">
+                                <VolumeSlider onVolumeChange={handleVolumeChange} />
+                            </div>
                         </div>
                     </div>
+
+                    {/* <div className="container">
+                        <div className="main-wrapper">
+
+                            <img src={current_track.album.images[0].url} className="now-playing__cover" alt="" />
+
+                            <div className="now-playing__side">
+                                <div className="now-playing__name">{current_track.name}</div>
+                                <div className="now-playing__artist">{current_track.artists[0].name}</div>
+
+                                <button className="btn-spotify" onClick={() => { playTracks(["spotify:track:3TGRqZ0a2l1LRblBkJoaDx"]) }} >
+                                    CMM
+                                </button>
+
+                                <button className="btn-spotify" onClick={() => { player.previousTrack() }} >
+                                    &lt;&lt;
+                                </button>
+
+                                <button className="btn-spotify" onClick={() => { player.togglePlay() }} >
+                                    { is_paused ? "PLAY" : "PAUSE" }
+                                </button>
+
+                                <button className="btn-spotify" onClick={() => { player.nextTrack() }} >
+                                    &gt;&gt;
+                                </button>
+
+                                <button className="btn-spotify" onClick={() => { playRandomTracks(10) }} >
+                                    ++
+                                </button>
+                                <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position} />
+                                <VolumeSlider onVolumeChange={handleVolumeChange} />
+                            </div>
+                        </div>
+                    </div> */}
                 </div>
             </>
         );
