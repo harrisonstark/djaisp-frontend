@@ -21,7 +21,9 @@ function SongPositionSlider({ onPositionChange, duration, position }: SongPositi
     <div className="flex flex-row items-center">
       <div className='pb-1'>{formatTime(position)}</div>
       <div className="w-full px-4">
-        <Slider defaultValue={[0]} step={1} max={100} />
+        <Slider defaultValue={[0]} step={Math.floor(duration / 1000)} max={duration}
+         onChange={handlePositionChange} 
+         value={[position]}/>
       </div>
       
       {/* <Slider defaultValue={[0]} max={duration} step={Math.floor(duration / 1000)} onChange={handlePositionChange}/> */}

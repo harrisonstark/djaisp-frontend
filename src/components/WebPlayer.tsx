@@ -311,17 +311,23 @@ function WebPlayback(props) {
                     <div className="py-2 bg-zinc-800 inset-x-0 top-0  flex flex-wrap items-center lg:justify-between sm:justify-center">
                         <div className="flex flex-row mx-2"> 
                             <div className='rounded-lg'>
-                                <img src={current_track.album.images[0].url} className="w-16 h-16 bg-blue-400" alt="" />
+                                {current_track?.album?.images[0]  ? (
+                                    <img src={current_track.album.images[0].url} className="w-16 h-16 bg-blue-400" alt="" />
+                                ): (<></>)}
                             </div>
                             <div className="flex flex-col pl-3 justify-center">
-                                <div id="sample-title">{current_track.name}</div>
-                                <div id="sample-artist">{current_track.artists[0].name}</div>
+                            {current_track?.name && current_track?.artists[0]?.name ? (
+                                <div>
+                                    <div id="sample-title">{current_track.name}</div>
+                                    <div id="sample-artist">{current_track.artists[0].name}</div>
+                                </div>
+                            ) : (<></>)}
                             </div>
                         </div>
                         <div className="w-1/2 flex flex-row justify-center mx-2">
                             <div className="flex flex-col w-full justify-center">
                                 <div className='flex flex-row items-center justify-center gap-4 pb-1'>
-                                    <button className="btn-spotify" onClick={() => { player.previousTrack() }} >
+                                    <button className="btn-spotify" onClick={() => { player.previousTrack() && counter-- && counter-- }} >
                                         <BsFillSkipStartFill className="hover:fill-zinc-700" size={26} />
                                     </button>
                                     <button className="btn-spotify" onClick={() => { player.togglePlay() }} >
@@ -342,9 +348,11 @@ function WebPlayback(props) {
                         </div>
                     </div>
 
+                    <ChatBox onSendMessage={(message) => { message !== "" && playRandomTracks(message) }}/>
+
                     {/* <div className="container">
                         <div className="main-wrapper">
-                       {current_track.album.images[0] ? (
+                       {current_track?.album?.images[0]  ? (
                                 <img src={current_track.album.images[0].url} className="now-playing__cover" alt="" />
                         ) : (<></>)}
 
@@ -375,7 +383,7 @@ function WebPlayback(props) {
                             <VolumeSlider onVolumeChange={handleVolumeChange} />
                             <ChatBox onSendMessage={(message) => { message !== "" && playRandomTracks(message) }}/>
                         </div>
-                    </div>
+                        </div> */}
                 </div>
             </>
         );
