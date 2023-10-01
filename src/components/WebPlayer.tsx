@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import VolumeSlider from './VolumeSlider';
@@ -9,6 +9,8 @@ import {BsPlayCircleFill,
         BsFillSkipEndFill} 
 from 'react-icons/bs'
 
+import ChatBox from './ChatBox';
+import { logOut, removeDuplicates } from '../utils/Utils';
 
 declare global {
     interface Window {
@@ -31,29 +33,33 @@ const track = {
     ]
 }
 
+let prev_track = track;
+
+let trackList = {};
+
+let counter = 0;
+
+let screenMessage = "Instance not active. Transfer your playback using your Spotify app if it does not automatically.";
+
 function WebPlayback(props) {
     const [is_paused, setPaused] = useState(false);
     const [is_active, setActive] = useState(false);
     const [player, setPlayer] = useState(undefined);
     const [current_track, setTrack] = useState(track);
     const [device_id, setDeviceId] = useState('');
-    const [current_volume, setVolume] = useState(Cookies.get("volume") || 0.5);
     const [position, setPosition] = useState(0);
     const [duration, setDuration] = useState(0);
 
-    const playerRef = useRef(null);
-
     // Callback function to receive the volume value from VolumeSlider
     const handleVolumeChange = (newVolume) => {
-        if (playerRef.current) {
-            playerRef.current.setVolume(newVolume);
+        if (player) {
+            player.setVolume(newVolume);
         }
-        setVolume(newVolume);
     };
 
     const handlePositionChange = (newPosition) => {
-        if (playerRef.current) {
-            playerRef.current.seek(newPosition);
+        if (player) {
+            player.seek(newPosition);
         }
         setPosition(newPosition);
     };
@@ -71,18 +77,15 @@ function WebPlayback(props) {
             const player = new window.Spotify.Player({
                 name: 'DJAISP',
                 getOAuthToken: cb => { cb(props.token); },
-                volume: current_volume
+                volume: Cookies.get("volume") || 0.5
             });
-            playerRef.current = player;
             setPlayer(player);
 
             player.addListener('ready', ({ device_id }) => {
-                console.log('Ready with Device ID', device_id);
                 setDeviceId(device_id);
             });
 
             player.addListener('not_ready', ({ device_id }) => {
-                console.log('Device ID has gone offline', device_id);
                 setDeviceId("");
             });
 
@@ -91,7 +94,7 @@ function WebPlayback(props) {
                 if (!state) {
                     return;
                 }
-
+                
                 setTrack(state.track_window.current_track);
                 setPaused(state.paused);
                 setPosition(state.position);
@@ -112,11 +115,11 @@ function WebPlayback(props) {
     useEffect(() => {
         const handleBeforeUnload = () => {
           // Set the cookie to true when the page is about to be closed
-          if (playerRef.current) {
-            playerRef.current.getVolume().then(volume => {
+          if (player) {
+            player.getVolume().then(volume => {
                 Cookies.set("volume", volume, { path: "/" });
             });
-            playerRef.current.disconnect();
+            player.disconnect();
           }
         };
     
@@ -132,7 +135,9 @@ function WebPlayback(props) {
     let counting;
 
     const add = () => {
-      setPosition((prevPosition) => prevPosition + 1000);
+        setPosition((prevPosition) => {
+            return prevPosition + 1000;
+          });
     };
   
     const play = () => {
@@ -158,6 +163,51 @@ function WebPlayback(props) {
       };
     }, [is_paused]);
 
+    useEffect(() => {
+        if(prev_track["id"] !== current_track["id"] && prev_track["name"] !== ""){
+            counter++;
+        }
+        prev_track = current_track;
+        if(counter < 0) {
+            counter = 0;
+        } else if (counter >= Object.keys(trackList).length && Object.keys(trackList).length !== 0) {
+            counter = 0;
+            playRandomTracks();
+        } else {
+            if(Object.keys(trackList).length !== 0){
+                const time_listened = position / duration;
+                try {
+                    trackList[counter]["time_listened"] = time_listened;
+                } catch(error){
+                    console.error(error);
+                }
+            }
+        }
+      }, [current_track]);
+
+      async function getTrackFeatures(uri) {
+        const apiUrl = `https://api.spotify.com/v1/audio-features/${uri}`;
+      
+        const headers = {
+          'Authorization': `Bearer ${props.token}`
+        };
+      
+        try {
+          const response = await axios.get(apiUrl, { headers });
+      
+          const values = ["danceability", "energy", "instrumentalness", "speechiness", "valence"];
+
+          let result = {};
+          for (let value of values) {
+            result[value] = response.data[value];
+          }
+          result["time_listened"] = 0;
+          return result;
+        } catch (error) {
+          console.error('Track play unsuccessful', error);
+        }
+      }
+
     function playTracks(uriList) {
         const apiUrl = 'https://api.spotify.com/v1/me/player/play';
 
@@ -171,37 +221,39 @@ function WebPlayback(props) {
         };
 
         axios.put(apiUrl, body, { headers })
-        .then(() => {
-            setActive(true);
+        .then(async () => {
+            trackList = {};
+            counter = 0;
+            prev_track = {name: "", album: {images: [{ url: "" }]}, artists: [{ name: "" }]};
+            for(let i = 0; i < uriList.length; i++){
+                trackList[i] = await getTrackFeatures(uriList[i].split(':')[2]);
+            }
         })
         .catch(error => {
             console.error('Track play unsuccessful', error);
         });
     }
 
-    function playRandomTracks(limit){
-            const user_id = Cookies.get('user_id');
-            const email = Cookies.get('email');
-            const values = ["acousticness", "danceability", "energy", "instrumentalness", "liveness", "popularity", "speechiness", "valence"];
-            let queryParams = `limit=${limit}&seed_genres=indie-pop`
-            for(let value of values){
-                let num = Math.random();
-                if(value === "popularity"){
-                    num *= 100;
-                    num = Math.floor(num);
-                }
-                queryParams += `&target_${value}=${num}`
-            }
-            axios.get(`http://localhost:8989/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
-            .then((response) => {
-                playTracks(response.data);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            })
+    function playRandomTracks(message = ""){
+        const user_id = Cookies.get('user_id');
+        const email = Cookies.get('email');
+        let queryParams = ""
+        if (message.trim() === '') {
+            queryParams += `track_list=${JSON.stringify(trackList)}&seed_genres=${Cookies.get("seed_genres")}`
+        } else {
+            queryParams += `message=${message}`
+        }
+        axios.get(`http://localhost:8989/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
+        .then((response) => {
+            Cookies.set("seed_genres", response.data.seed_genres, { path: "/" });
+            playTracks(removeDuplicates(response.data.songs));
+        })
+        .catch((error) => {
+            console.error('Error fetching data:', error);
+        })
     }
 
-    if (!is_active) {
+    useEffect(() => {
         const apiUrl = 'https://api.spotify.com/v1/me/player';
 
         
@@ -223,16 +275,32 @@ function WebPlayback(props) {
             setActive(true);
         })
         .catch(error => {
-            console.error('Playback transfer unsuccessful', error);
-            if(error.message === "Request failed with status code 401"){
-                console.error("TOKEN RELOAD TIME!!!!!!!!!")
+            if(error.message === "Request failed with status code 404"){
+                screenMessage = "Loading...";
+            } else if(error.message === "Request failed with status code 401"){
+                screenMessage = "Refreshing token, your page will reload, please wait...";
+                axios.put(`http://localhost:8989/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
+                .then(() => {
+                    window.location.href = "/";
+                })
+                .catch((error) => {
+                    console.error('There was a fatal error, logging user out', error);
+                    logOut();
+                });
+            } else if (error.message === "Request failed with status code 403"){
+                screenMessage = "Something broke :( do you have a paid Spotify premium subscription?";
+            } else {
+                screenMessage = 'Playback transfer unsuccessful (seriously broke)';
             }
         });
+      }, [device_id]);
+
+    if (!is_active) {
         return (
             <>
                 <div>
                     <div className="main-wrapper">
-                        <b> Instance not active. Transfer your playback using your Spotify app if it does not automatically </b>
+                        <b> {screenMessage} </b>
                     </div>
                 </div>
             </>)
@@ -276,37 +344,38 @@ function WebPlayback(props) {
 
                     {/* <div className="container">
                         <div className="main-wrapper">
+                       {current_track.album.images[0] ? (
+                                <img src={current_track.album.images[0].url} className="now-playing__cover" alt="" />
+                        ) : (<></>)}
 
-                            <img src={current_track.album.images[0].url} className="now-playing__cover" alt="" />
-
-                            <div className="now-playing__side">
+                        <div className="now-playing__side">
+                        {current_track?.name && current_track?.artists[0]?.name ? (
+                            <>
                                 <div className="now-playing__name">{current_track.name}</div>
                                 <div className="now-playing__artist">{current_track.artists[0].name}</div>
+                            </>
+                        ) : (<></>)}
 
                                 <button className="btn-spotify" onClick={() => { playTracks(["spotify:track:3TGRqZ0a2l1LRblBkJoaDx"]) }} >
                                     CMM
                                 </button>
 
-                                <button className="btn-spotify" onClick={() => { player.previousTrack() }} >
-                                    &lt;&lt;
-                                </button>
+                            <button className="btn-spotify" onClick={() => { player.previousTrack() && counter-- && counter-- }} >
+                                &lt;&lt;
+                            </button>
 
                                 <button className="btn-spotify" onClick={() => { player.togglePlay() }} >
                                     { is_paused ? "PLAY" : "PAUSE" }
                                 </button>
 
-                                <button className="btn-spotify" onClick={() => { player.nextTrack() }} >
-                                    &gt;&gt;
-                                </button>
-
-                                <button className="btn-spotify" onClick={() => { playRandomTracks(10) }} >
-                                    ++
-                                </button>
-                                <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position} />
-                                <VolumeSlider onVolumeChange={handleVolumeChange} />
-                            </div>
+                            <button className="btn-spotify" onClick={() => { player.nextTrack() }} >
+                                &gt;&gt;
+                            </button>
+                            <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position} />
+                            <VolumeSlider onVolumeChange={handleVolumeChange} />
+                            <ChatBox onSendMessage={(message) => { message !== "" && playRandomTracks(message) }}/>
                         </div>
-                    </div> */}
+                    </div>
                 </div>
             </>
         );

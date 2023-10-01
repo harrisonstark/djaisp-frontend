@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { getQueryParams } from './utils/Utils';
+import { getQueryParams, logIn, logOut } from './utils/Utils';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
@@ -12,13 +12,10 @@ function Redirect() {
     if(code && state && Cookies.get('state') === state){
         axios.get(`http://localhost:8989/authorize?code=${code}`)
         .then((response) => {
-            Cookies.set("loggedIn", 'true', { path: "/" });
-            Cookies.set("user_id", response.data.user_id, { path: "/" });
-            Cookies.set("email", response.data.email, { path: "/" });
-            window.location.href = "/";
+            logIn(response.data.user_id, response.data.email);
         })
         .catch((error) => {
-            console.error('TODO send user to error page and ask to try again', error);
+            logOut();
         });
     }
   }, []);
