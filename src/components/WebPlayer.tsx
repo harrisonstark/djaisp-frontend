@@ -298,7 +298,7 @@ function WebPlayback(props) {
             <>
                 <div className="container">
                     <div className="main-wrapper">
-                       {current_track.album.images[0] ? (
+                       {current_track?.album?.images[0] ? (
                             <img src={current_track.album.images[0].url} className="now-playing__cover" alt="" />
                         ) : (<></>)}
 
