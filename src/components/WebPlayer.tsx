@@ -52,12 +52,15 @@ function WebPlayback(props) {
 
     // Callback function to receive the volume value from VolumeSlider
     const handleVolumeChange = (newVolume) => {
+        console.log(newVolume);
         if (player) {
             player.setVolume(newVolume);
+            Cookies.set("volume", newVolume, { path: "/" });
         }
     };
 
     const handlePositionChange = (newPosition) => {
+        console.log(newPosition);
         if (player) {
             player.seek(newPosition);
         }
@@ -113,14 +116,10 @@ function WebPlayback(props) {
     }, []);
 
     useEffect(() => {
-        const handleBeforeUnload = () => {
-          // Set the cookie to true when the page is about to be closed
-          if (player) {
-            player.getVolume().then(volume => {
-                Cookies.set("volume", volume, { path: "/" });
-            });
-            player.disconnect();
-          }
+        const handleBeforeUnload = async () => {
+            if (player) {
+                player.disconnect();
+            }
         };
     
         // Add the "beforeunload" event listener when the component mounts
@@ -267,9 +266,6 @@ function WebPlayback(props) {
         play: false,
         };
 
-        console.log(props.token)
-        console.log(device_id)
-
         axios.put(apiUrl, body, { headers })
         .then(() => {
             setActive(true);
@@ -350,40 +346,9 @@ function WebPlayback(props) {
 
                     <ChatBox onSendMessage={(message) => { message !== "" && playRandomTracks(message) }}/>
 
-                    {/* <div className="container">
-                        <div className="main-wrapper">
-                       {current_track?.album?.images[0]  ? (
-                                <img src={current_track.album.images[0].url} className="now-playing__cover" alt="" />
-                        ) : (<></>)}
-
-                        <div className="now-playing__side">
-                        {current_track?.name && current_track?.artists[0]?.name ? (
-                            <>
-                                <div className="now-playing__name">{current_track.name}</div>
-                                <div className="now-playing__artist">{current_track.artists[0].name}</div>
-                            </>
-                        ) : (<></>)}
-
-                                <button className="btn-spotify" onClick={() => { playTracks(["spotify:track:3TGRqZ0a2l1LRblBkJoaDx"]) }} >
-                                    CMM
-                                </button>
-
-                            <button className="btn-spotify" onClick={() => { player.previousTrack() && counter-- && counter-- }} >
-                                &lt;&lt;
-                            </button>
-
-                                <button className="btn-spotify" onClick={() => { player.togglePlay() }} >
-                                    { is_paused ? "PLAY" : "PAUSE" }
-                                </button>
-
-                            <button className="btn-spotify" onClick={() => { player.nextTrack() }} >
-                                &gt;&gt;
-                            </button>
-                            <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position} />
-                            <VolumeSlider onVolumeChange={handleVolumeChange} />
-                            <ChatBox onSendMessage={(message) => { message !== "" && playRandomTracks(message) }}/>
-                        </div>
-                        </div> */}
+                    <button className="btn-spotify" onClick={() => { playTracks(["spotify:track:3TGRqZ0a2l1LRblBkJoaDx"]) }} >
+                        CMM
+                    </button>
                 </div>
             </>
         );

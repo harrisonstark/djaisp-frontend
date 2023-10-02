@@ -11,8 +11,8 @@ interface SongPositionSliderProps {
 function SongPositionSlider({ onPositionChange, duration, position }: SongPositionSliderProps) {
 
   // Handle position change
-  const handlePositionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newPosition = parseFloat(event.target.value);
+  const handlePositionChange = (values: number[]) => {
+    const newPosition = values[0];
     position = newPosition;
     onPositionChange(newPosition);
   };
@@ -21,24 +21,9 @@ function SongPositionSlider({ onPositionChange, duration, position }: SongPositi
     <div className="flex flex-row items-center">
       <div className='pb-1'>{formatTime(position)}</div>
       <div className="w-full px-4">
-        <Slider defaultValue={[0]} step={Math.floor(duration / 1000)} max={duration}
-         onChange={handlePositionChange} 
-         value={[position]}/>
+        <Slider defaultValue={[position]} value={[position]} min={0} max={duration} step={Math.floor(duration / 1000)} onValueChange={handlePositionChange}/>
       </div>
-      
-      {/* <Slider defaultValue={[0]} max={duration} step={Math.floor(duration / 1000)} onChange={handlePositionChange}/> */}
-      {/* <label htmlFor="positionSlider">Position in Song:</label>
-      <input
-        type="range"
-        id="positionSlider"
-        name="positionSlider"
-        min="0"
-        max={duration}
-        step={Math.floor(duration / 1000)}
-        value={position.toString()} // Ensure value is a string
-        onChange={handlePositionChange}
-      /> */}
-      <div className='pb-1'>{formatTime(duration - position)}</div>
+      <div className='pb-1'>{formatTime(duration)}</div>
     </div>
   );
 }

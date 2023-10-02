@@ -11,7 +11,7 @@ function App() {
   useEffect(() => {
 
     async function getToken() {
-      const response = await axios.get(`http://localhost:8989/get_credentials?user_id=srl2snyev9no2wualyyt3goj7&email=hstark@ufl.edu`);
+      const response = await axios.get(`http://localhost:8989/get_credentials?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
       setToken(response.data["access_token"]);
     }
     if(Cookies.get('loggedIn') === 'true'){

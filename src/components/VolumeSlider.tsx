@@ -1,39 +1,43 @@
 import React, { useState } from 'react';
 import Cookies from 'js-cookie';
 import { Slider } from "./ui/slider"
-import { BsFillVolumeUpFill } from 'react-icons/bs'
+import { BsFillVolumeMuteFill, BsFillVolumeOffFill, BsFillVolumeUpFill } from 'react-icons/bs'
 
 // Define the prop type
 interface VolumeSliderProps {
   onVolumeChange: (newVolume: number) => void;
 }
 
+let prevVolume = Cookies.get("prevVolume") || 0.5;
+
+let isMuted = Cookies.get("muted") === "true";
+
 function VolumeSlider({ onVolumeChange }: VolumeSliderProps) {
-  const [volume, setVolume] = useState(Cookies.get("volume") || 0.5); // Initial volume value (0-1)
+  const [volume, setVolume] = useState(isMuted ? 0 : Cookies.get("volume") || 0.5); // Initial volume value (0-1)
 
   // Handle volume change
-  const handleVolumeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(event.target.value);
+  const handleVolumeChange = (values: number[]) => {
+    const newVolume = values[0];
+    prevVolume = newVolume;
+    Cookies.set("prevVolume", newVolume, { path: "/" });
     setVolume(newVolume);
     onVolumeChange(newVolume);
   };
 
+  function handleToggleMute() {
+    const newVol = isMuted ? prevVolume : 0;
+    setVolume(newVol);
+    onVolumeChange(newVol);
+    isMuted = !isMuted;
+    Cookies.set("muted", isMuted ? "true" : "false", { path: "/" });
+  }
+
   return (
     <div className='flex justify-center items-center'>
-      <BsFillVolumeUpFill size={24} />
-      <Slider defaultValue={[0.5]} step={0.01} max={1} onChange={handleVolumeChange} className="w-full px-4"/>
-      {/* <label htmlFor="volumeSlider">Volume:</label>
-      <input
-        type="range"
-        id="volumeSlider"
-        name="volumeSlider"
-        min="0"
-        max="1"
-        step="0.01"
-        value={volume.toString()} // Ensure value is a string
-        onChange={handleVolumeChange}
-      />
-      <span>{Math.round(volume * 100)}%</span> */}
+      <div onClick={handleToggleMute}>
+                {isMuted ? <BsFillVolumeMuteFill size={24} /> : volume === 0 ? <BsFillVolumeOffFill size={24} /> : <BsFillVolumeUpFill size={24} />}
+      </div>
+      <Slider disabled={isMuted} defaultValue={[volume]} value={[volume]} step={0.01} max={1} onValueChange={handleVolumeChange} className="w-full px-4"/>
     </div>
   );
 }
