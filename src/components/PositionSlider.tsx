@@ -12,7 +12,6 @@ function SongPositionSlider({ onPositionChange, duration, position }: SongPositi
 
   // Handle position change
   const handlePositionChange = (values: number[]) => {
-    console.log(values[0]);
     if(values[0] !== duration){
       const newPosition = values[0];
       position = newPosition;
