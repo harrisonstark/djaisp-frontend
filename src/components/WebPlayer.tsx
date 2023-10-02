@@ -52,7 +52,6 @@ function WebPlayback(props) {
 
     // Callback function to receive the volume value from VolumeSlider
     const handleVolumeChange = (newVolume) => {
-        console.log(newVolume);
         if (player) {
             player.setVolume(newVolume);
             Cookies.set("volume", newVolume, { path: "/" });
@@ -60,7 +59,6 @@ function WebPlayback(props) {
     };
 
     const handlePositionChange = (newPosition) => {
-        console.log(newPosition);
         if (player) {
             player.seek(newPosition);
         }
