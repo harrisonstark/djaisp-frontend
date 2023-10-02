@@ -13,11 +13,8 @@ RUN npm install
 # Copy the current directory contents into the container at /app
 COPY . .
 
-# Build the React app
-RUN npm run start
-
 # Expose the port the app will run on
 EXPOSE 9090
 
 # Define the command to start the app
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]
