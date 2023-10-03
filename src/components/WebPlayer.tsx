@@ -6,7 +6,11 @@ import PositionSlider from './PositionSlider';
 import {BsPlayCircleFill, 
         BsPauseCircleFill,
         BsFillSkipStartFill,
-        BsFillSkipEndFill} 
+        BsFillSkipEndFill,
+        BsHandThumbsUp,
+        BsHandThumbsUpFill,
+        BsHandThumbsDown,
+        BsHandThumbsDownFill} 
 from 'react-icons/bs'
 
 import ChatBox from './ChatBox';
@@ -161,10 +165,14 @@ function WebPlayback(props) {
     }, [is_paused]);
 
     useEffect(() => {
-        if(prev_track["id"] !== current_track["id"] && prev_track["name"] !== ""){
-            counter++;
+        try {
+            if(prev_track["id"] !== current_track["id"] && prev_track["name"] !== ""){
+                counter++;
+            }
+            prev_track = current_track;
+        } catch (error) {
+            console.error("something broke");
         }
-        prev_track = current_track;
         if(counter < 0) {
             counter = 0;
         } else if (counter >= Object.keys(trackList).length && Object.keys(trackList).length !== 0) {
@@ -199,6 +207,7 @@ function WebPlayback(props) {
             result[value] = response.data[value];
           }
           result["time_listened"] = 0;
+          result["thumbs"] = "";
           return result;
         } catch (error) {
           console.error('Track play unsuccessful', error);
@@ -288,6 +297,21 @@ function WebPlayback(props) {
             }
         });
       }, [device_id]);
+    
+    function isThumbs(direction) {
+        return trackList[counter]?.thumbs === direction;
+    }
+    
+    function toggleThumbs(direction) {
+        if(Object.keys(trackList).length !== 0){
+            const currentDirection = trackList[counter]["thumbs"];
+            if(currentDirection === direction){
+                trackList[counter]["thumbs"] = "";
+            } else {
+                trackList[counter]["thumbs"] = direction;
+            }
+        }
+    }
 
     if (!is_active) {
         return (
@@ -321,15 +345,23 @@ function WebPlayback(props) {
                         <div className="w-1/2 flex flex-row justify-center mx-2">
                             <div className="flex flex-col w-full justify-center">
                                 <div className='flex flex-row items-center justify-center gap-4 pb-1'>
+                                    <button className="btn-thumbs-down" onClick={() => {toggleThumbs("down")}} >
+                                        { isThumbs("down") ? <BsHandThumbsDownFill className="hover:fill-zinc-700" size={24}/> : 
+                                        <BsHandThumbsDown className="hover:fill-zinc-700" size={24}/>}
+                                    </button>
                                     <button className="btn-spotify" onClick={() => { player.previousTrack() && counter-- && counter-- }} >
-                                        <BsFillSkipStartFill className="hover:fill-zinc-700" size={26} />
+                                        <BsFillSkipStartFill className="hover:fill-zinc-700" size={24} />
                                     </button>
                                     <button className="btn-spotify" onClick={() => { player.togglePlay() }} >
                                         { is_paused ? <BsPlayCircleFill className="hover:fill-zinc-700" size={24}/> : 
-                                        <BsPauseCircleFill className="hover:fill-zinc-700" size={26}/> }
+                                        <BsPauseCircleFill className="hover:fill-zinc-700" size={24}/> }
                                     </button>
                                     <button className="btn-spotify" onClick={() => { player.nextTrack() }} >
-                                        <BsFillSkipEndFill className="hover:fill-zinc-700" size={26} />
+                                        <BsFillSkipEndFill className="hover:fill-zinc-700" size={24} />
+                                    </button>
+                                    <button className="btn-thumbs-up" onClick={() => {toggleThumbs("up")}} >
+                                        { isThumbs("up") ? <BsHandThumbsUpFill className="hover:fill-zinc-700" size={24}/> : 
+                                        <BsHandThumbsUp className="hover:fill-zinc-700" size={24}/>}
                                     </button>
                                 </div>
                                 <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position} /> 

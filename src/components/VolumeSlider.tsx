@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Cookies from 'js-cookie';
 import { Slider } from "./ui/slider"
-import { BsFillVolumeMuteFill, BsFillVolumeOffFill, BsFillVolumeUpFill } from 'react-icons/bs'
+import { BsFillHandThumbsUpFill, BsFillVolumeMuteFill, BsFillVolumeOffFill, BsFillVolumeUpFill, BsHandThumbsDown, BsHandThumbsDownFill, BsHandThumbsUp, BsHandThumbsUpFill } from 'react-icons/bs'
 
 // Define the prop type
 interface VolumeSliderProps {
