@@ -99,7 +99,7 @@ function WebPlayback(props) {
                 setDeviceId(device_id);
             });
 
-            player.addListener('not_ready', ({ device_id }) => {
+            player.addListener('not_ready', () => {
                 setDeviceId("");
             });
 
