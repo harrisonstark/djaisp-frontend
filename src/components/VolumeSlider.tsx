@@ -33,7 +33,7 @@ function VolumeSlider({ onVolumeChange }: VolumeSliderProps) {
   }
 
   return (
-    <div className='flex justify-center items-center'>
+    <div className='flex justify-center items-center' style={{ minWidth: '120px' }}>
       <div onClick={handleToggleMute} className="pr-4">
                 {isMuted ? <BsFillVolumeMuteFill size={24} /> : volume === 0 ? <BsFillVolumeOffFill size={24} /> : <BsFillVolumeUpFill size={24} />}
       </div>

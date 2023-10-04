@@ -10,11 +10,14 @@ import {BsPlayCircleFill,
         BsHandThumbsUp,
         BsHandThumbsUpFill,
         BsHandThumbsDown,
-        BsHandThumbsDownFill} 
+        BsHandThumbsDownFill,
+        BsLightningFill,
+        BsLightning} 
 from 'react-icons/bs'
 
 import ChatBox from './ChatBox';
-import { logOut, removeDuplicates } from '../utils/Utils';
+import { logOut } from '../utils/Utils';
+import { Button } from './ui/button';
 
 declare global {
     interface Window {
@@ -39,9 +42,15 @@ const track = {
 
 let prev_track = track;
 
-let trackList = {};
+const seedNumberFromCookie = Cookies.get("seedNumber") || 0
 
-let counter = 0;
+let seedNumber = parseInt(seedNumberFromCookie);
+
+let trackList = seedNumber > 0 && Cookies.get("trackList") ? JSON.parse(Cookies.get("trackList")) : {};
+
+const counterFromCookie = Cookies.get("counter") || 0;
+
+let counter = parseInt(counterFromCookie);
 
 let screenMessage = "Instance not active. Transfer your playback using your Spotify app if it does not automatically.";
 
@@ -166,26 +175,36 @@ function WebPlayback(props) {
 
     useEffect(() => {
         try {
-            if(prev_track["id"] !== current_track["id"] && prev_track["name"] !== ""){
+            if(prev_track["id"] !== current_track["id"] && prev_track["name"] !== "" && seedNumber > 0){
                 counter++;
             }
             prev_track = current_track;
         } catch (error) {
             console.error("something broke");
+            counter = 0;
+            seedNumber = 0;
+            trackList = {};
+            Cookies.set("counter", 0, { path: "/" });
+            Cookies.set("seedNumber", 0, { path: "/" });
+            Cookies.set("trackList", {}, { path: "/" });
         }
-        if(counter < 0) {
-            counter = 0;
-        } else if (counter >= Object.keys(trackList).length && Object.keys(trackList).length !== 0) {
-            counter = 0;
-            playRandomTracks();
-        } else {
-            if(Object.keys(trackList).length !== 0){
-                const time_listened = position / duration;
-                try {
-                    trackList[counter]["time_listened"] = time_listened;
-                } catch(error){
-                    console.error(error);
+        if(Object.keys(trackList).length > 1 && seedNumber > 0){
+            if(counter < 0) {
+                counter = 0;
+            } else if (counter >= Object.keys(trackList).length) {
+                counter = 0;
+                playRandomTracks();
+            } else {
+                if(Object.keys(trackList).length !== 0){
+                    const time_listened = position / duration;
+                    try {
+                        trackList[counter]["time_listened"] = time_listened;
+                    } catch(error){
+                        console.error(error);
+                    }
                 }
+                Cookies.set("trackList", JSON.stringify(trackList), { path: "/" });
+                Cookies.set("counter", counter, { path: "/" });
             }
         }
       }, [current_track]);
@@ -215,7 +234,7 @@ function WebPlayback(props) {
         try {
           const response = await axios.get(apiUrl, { headers });
       
-          const values = ["danceability", "energy", "valence"];
+          const values = ["danceability", "speechiness", "instrumentalness", "energy", "valence"];
 
           let result = {};
           for (let value of values) {
@@ -232,7 +251,6 @@ function WebPlayback(props) {
       }
 
     function playTracks(uriList) {
-        console.log(uriList);
         const apiUrl = 'https://api.spotify.com/v1/me/player/play';
 
         const headers = {
@@ -263,14 +281,20 @@ function WebPlayback(props) {
         const email = Cookies.get('email');
         let queryParams = ""
         if (message.trim() === '') {
-            queryParams += `track_list=${JSON.stringify(trackList)}&seed_genres=${Cookies.get("seed_genres")}`
+            queryParams += `track_list=${JSON.stringify(trackList)}&seed_genres=${Cookies.get("seedGenres")}&seed_number=${seedNumber}`
         } else {
             queryParams += `message=${message}`
         }
         axios.get(`http://localhost:8989/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
         .then((response) => {
-            Cookies.set("seed_genres", response.data.seed_genres, { path: "/" });
-            playTracks(removeDuplicates(response.data.songs));
+            if(response.data?.status){
+                console.error("We had a problem, sorry!");
+            } else {
+                Cookies.set("seedGenres", response.data.seed_genres, { path: "/" });
+                seedNumber = response.data.seed_number;
+                Cookies.set("seedNumber", seedNumber, { path: "/" });
+                playTracks(response.data.songs);
+            }
         })
         .catch((error) => {
             console.error('Error fetching data:', error);
@@ -314,14 +338,18 @@ function WebPlayback(props) {
                 screenMessage = 'Playback transfer unsuccessful (seriously broke)';
             }
         });
-      }, [device_id]);
+    }, [device_id]);
     
     function isThumbs(direction) {
         return trackList[counter]?.thumbs === direction;
     }
+
+    function isLastSong() {
+        return Object.keys(trackList).length === counter + 1;
+    }
     
     function toggleThumbs(direction) {
-        if(Object.keys(trackList).length !== 0){
+        if(Object.keys(trackList).length !== 0 && seedNumber > 0){
             const currentDirection = trackList[counter]["thumbs"];
             if(currentDirection === direction){
                 trackList[counter]["thumbs"] = "";
@@ -346,61 +374,79 @@ function WebPlayback(props) {
     } else {
         return (
             <>
-                <div className="w-full">
-                    <div className="py-2 bg-zinc-800 inset-x-0 top-0  flex flex-wrap items-center lg:justify-between sm:justify-center">
-                        <div className="flex flex-row mx-2"> 
+                <div className="w-full bg-zinc-800 inset-x-0 top-0 flex flex-wrap items-center justify-center">
+                    <div className="flex flex-col justify-center items-center">
+                        <div className="flex flex-row px-2 py-2"> 
                             <div className='rounded-lg'>
-                                {current_track?.album?.images[0]  ? (
-                                    <img src={current_track.album.images[0].url} className="w-16 h-16 bg-blue-400" alt="" />
-                                ): (<></>)}
+                                {current_track?.album?.images[0] ? (
+                                    <img src={current_track.album.images[0].url} className="max-w-16 max-h-16 bg-blue-400 object-cover rounded-lg" alt="" />
+                                ) : (<></>)}
                             </div>
-                            <div className="flex flex-col pl-3 justify-center">
-                            {current_track?.name && current_track?.artists[0]?.name ? (
-                                <div>
-                                    <div id="sample-title">{current_track.name}</div>
-                                    <div id="sample-artist">{current_track.artists[0].name}</div>
-                                </div>
-                            ) : (<></>)}
-                            </div>
-                        </div>
-                        <div className="w-1/2 flex flex-row justify-center mx-2">
-                            <div className="flex flex-col w-full justify-center">
-                                <div className='flex flex-row items-center justify-center gap-4 pb-1'>
-                                    <button className="btn-thumbs-down" onClick={() => {toggleThumbs("down")}} >
-                                        { isThumbs("down") ? <BsHandThumbsDownFill className="hover:fill-zinc-700" size={24}/> : 
-                                        <BsHandThumbsDown className="hover:fill-zinc-700" size={24}/>}
-                                    </button>
-                                    <button className="btn-spotify" onClick={() => { player.previousTrack() && counter-- && counter-- }} >
-                                        <BsFillSkipStartFill className="hover:fill-zinc-700" size={24} />
-                                    </button>
-                                    <button className="btn-spotify" onClick={() => { player.togglePlay() }} >
-                                        { is_paused ? <BsPlayCircleFill className="hover:fill-zinc-700" size={24}/> : 
-                                        <BsPauseCircleFill className="hover:fill-zinc-700" size={24}/> }
-                                    </button>
-                                    <button className="btn-spotify" onClick={() => { player.nextTrack() }} >
-                                        <BsFillSkipEndFill className="hover:fill-zinc-700" size={24} />
-                                    </button>
-                                    <button className="btn-thumbs-up" onClick={() => {toggleThumbs("up")}} >
-                                        { isThumbs("up") ? <BsHandThumbsUpFill className="hover:fill-zinc-700" size={24}/> : 
-                                        <BsHandThumbsUp className="hover:fill-zinc-700" size={24}/>}
-                                    </button>
-                                </div>
-                                <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position} /> 
-                            </div>
-                        </div>
-                        <div className="w-40 flex flex-row justify-center items-center mx-2"> 
-                            <div className="flex flex-col w-full pl-3 justify-center">
-                                <VolumeSlider onVolumeChange={handleVolumeChange} />
+                            <div className="flex flex-col pl-4 justify-center">
+                                {current_track?.name && current_track?.artists[0]?.name ? (
+                                    <div>
+                                        <div id="sample-title">{current_track.name}</div>
+                                        <div id="sample-artist">{current_track.artists[0].name}</div>
+                                    </div>
+                                ) : (<></>)}
                             </div>
                         </div>
                     </div>
-
-                    <ChatBox onSendMessage={(message) => { message !== "" && playRandomTracks(message) }}/>
-
-                    <button className="btn-spotify" onClick={() => { playTracks(["spotify:track:3TGRqZ0a2l1LRblBkJoaDx"]) }} >
-                        CMM
-                    </button>
+                    <div className="flex flex-row flex-wrap justify-center">
+                        <div className="flex flex-row justify-center flex-grow py-2 px-8">
+                            <div className="flex flex-col w-1/2 items-center justify-center">
+                                <div className='flex flex-row items-center justify-center gap-4 pb-1'>   
+                                    <button className="btn-thumbs-down" onClick={() => {toggleThumbs("down")}} >
+                                        { isThumbs("down") ? <BsHandThumbsDownFill className="hover:fill-zinc-700" size={24}/> : 
+                                            <BsHandThumbsDown className="hover:fill-zinc-700" size={24}/>}
+                                        </button>
+                                        <button className="btn-spotify" onClick={() => { player.previousTrack() && counter-- && counter-- }} >
+                                            <BsFillSkipStartFill className="hover:fill-zinc-700" size={24} />
+                                        </button>
+                                        <button className="btn-spotify" onClick={() => { player.togglePlay() }} >
+                                            { is_paused ? <BsPlayCircleFill className="hover:fill-zinc-700" size={24}/> : 
+                                            <BsPauseCircleFill className="hover:fill-zinc-700" size={24}/> }
+                                        </button>
+                                        <button className="btn-spotify" onClick={() => { player.nextTrack() }} >
+                                            <BsFillSkipEndFill className="hover:fill-zinc-700" size={24} />
+                                        </button>
+                                        <button className="btn-thumbs-up" onClick={() => {toggleThumbs("up")}} >
+                                            { isThumbs("up") ? <BsHandThumbsUpFill className="hover:fill-zinc-700" size={24}/> : 
+                                            <BsHandThumbsUp className="hover:fill-zinc-700" size={24}/>}
+                                        </button>
+                                </div>
+                                <div className='items-center justify-center'>
+                                    <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position}/>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex flex-row justify-center flex-shrink-0 py-2">
+                            <div className="flex flex-col justify-center">
+                                <div className="flex flex-row justify-center items-center mr-8"> 
+                                    {isLastSong() ? <BsLightningFill color="red" size={24}/> : <BsLightning size={24}/> }
+                                    <div className="flex flex-col w-full pl-3 justify-center">
+                                        <VolumeSlider onVolumeChange={handleVolumeChange} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                <div className="flex flex-row items-center my-2 w-full flex-wrap">
+                    <div className="flex flex-col justify-left mx-2 my-2">
+                        <ChatBox onSendMessage={(message) => { message !== "" && playRandomTracks(message) }}/>
+                    </div>
+                    <div className="flex flex-col justify-right mx-2">
+                        <Button onClick={() => { playTracks(["spotify:track:3TGRqZ0a2l1LRblBkJoaDx"]) }}>CMM</Button>
+                    </div>
+                </div>
+                <div className="flex flex-row justify-left items-center w-full"> 
+                    <div className="flex flex-col mx-2">
+                        <div className="text-gray-500 text-sm">
+                            DEBUG: We are on seed number {seedNumber}, track {counter + 1} / {Object.keys(trackList).length}
+                        </div>
+                    </div>
+                    </div>
             </>
         );
     }

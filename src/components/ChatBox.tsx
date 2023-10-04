@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import {Button} from './ui/button'
 
 const ChatBox = ({ onSendMessage }) => {
   const [message, setMessage] = useState('');
@@ -8,16 +9,29 @@ const ChatBox = ({ onSendMessage }) => {
     setMessage('');
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSendMessage();
+    }
+  };
+
   return (
-    <div>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
       <input
         type="text"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
+        onKeyUp={handleKeyPress}
         placeholder="Type your message..."
-        style={{ color: 'black' }}
+        style={{
+          color: 'black',
+          padding: '8px',
+          marginRight: '8px',
+          border: '1px solid #ccc',
+          borderRadius: '4px',
+          flex: 1,
+        }}
       />
-      <button onClick={handleSendMessage}>Send</button>
     </div>
   );
 };

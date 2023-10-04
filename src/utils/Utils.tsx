@@ -26,10 +26,6 @@ export function getQueryParams(url) {
   return queryParams;
 }
 
-export function removeDuplicates(arr) {
-  return Array.from(new Set(arr));
-}
-
 export function logIn(user_id, email) {
   Cookies.set("loggedIn", 'true', { path: "/" });
   Cookies.set("user_id", user_id, { path: "/" });
@@ -38,8 +34,13 @@ export function logIn(user_id, email) {
 }
 
 export function logOut() {
-  Cookies.set("loggedIn", 'false', { path: "/" });
-  Cookies.set("email", '', { path: "/" });
-  Cookies.set("user_id", '', { path: "/" });
+  Cookies.remove("loggedIn");
+  Cookies.remove("email");
+  Cookies.remove("user_id");
+  Cookies.remove("volume");
+  Cookies.remove("trackList");
+  Cookies.remove("counter");
+  Cookies.remove("seedGenres");
+  Cookies.remove("seedNumber");
   window.location.href = "/";
 }
