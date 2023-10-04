@@ -344,8 +344,12 @@ function WebPlayback(props) {
         return trackList[counter]?.thumbs === direction;
     }
 
+    function isRecommending() {
+        return seedNumber > 0;
+    }
+
     function isLastSong() {
-        return Object.keys(trackList).length === counter + 1;
+        return Object.keys(trackList).length > 3 && Object.keys(trackList).length === counter + 1;
     }
     
     function toggleThumbs(direction) {
@@ -423,7 +427,7 @@ function WebPlayback(props) {
                         <div className="flex flex-row justify-center flex-shrink-0 py-2">
                             <div className="flex flex-col justify-center">
                                 <div className="flex flex-row justify-center items-center mr-8"> 
-                                    {isLastSong() ? <BsLightningFill color="red" size={24}/> : <BsLightning size={24}/> }
+                                    {isRecommending() ? (isLastSong() ? <BsLightningFill color="#22C55E" size={24}/> : <BsLightningFill size={24}/>) : <BsLightning size={24}/> }
                                     <div className="flex flex-col w-full pl-3 justify-center">
                                         <VolumeSlider onVolumeChange={handleVolumeChange} />
                                     </div>
