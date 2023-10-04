@@ -35,7 +35,7 @@ function VolumeSlider({ onVolumeChange }: VolumeSliderProps) {
   return (
     <div className='flex justify-center items-center' style={{ minWidth: '120px' }}>
       <div onClick={handleToggleMute} className="pr-4">
-                {isMuted ? <BsFillVolumeMuteFill size={24} /> : volume === 0 ? <BsFillVolumeOffFill size={24} /> : <BsFillVolumeUpFill size={24} />}
+                {isMuted ? <BsFillVolumeMuteFill className="hover:fill-zinc-700" size={24} /> : volume === 0 ? <BsFillVolumeOffFill className="hover:fill-zinc-700" size={24} /> : <BsFillVolumeUpFill className="hover:fill-zinc-700" size={24} />}
       </div>
       <Slider disabled={isMuted} defaultValue={[volume]} value={[volume]} step={0.01} max={1} onValueChange={handleVolumeChange} className="w-full"/>
     </div>
