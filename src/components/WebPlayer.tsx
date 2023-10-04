@@ -190,6 +190,21 @@ function WebPlayback(props) {
         }
       }, [current_track]);
 
+      async function getPopularity(uri) {
+        const apiUrl = `https://api.spotify.com/v1/tracks/${uri}`;
+      
+        const headers = {
+          'Authorization': `Bearer ${props.token}`
+        };
+      
+        try {
+          const response = await axios.get(apiUrl, { headers });      
+          return response.data["popularity"];
+        } catch (error) {
+          console.error('Track get unsuccessful', error);
+        }
+      }
+
       async function getTrackFeatures(uri) {
         const apiUrl = `https://api.spotify.com/v1/audio-features/${uri}`;
       
@@ -200,21 +215,24 @@ function WebPlayback(props) {
         try {
           const response = await axios.get(apiUrl, { headers });
       
-          const values = ["danceability", "energy", "instrumentalness", "speechiness", "valence"];
+          const values = ["danceability", "energy", "valence"];
 
           let result = {};
           for (let value of values) {
             result[value] = response.data[value];
           }
+          result["popularity"] = await getPopularity(uri);
+          result["uri"] = uri;
           result["time_listened"] = 0;
           result["thumbs"] = "";
           return result;
         } catch (error) {
-          console.error('Track play unsuccessful', error);
+          console.error('Data get unsuccessful', error);
         }
       }
 
     function playTracks(uriList) {
+        console.log(uriList);
         const apiUrl = 'https://api.spotify.com/v1/me/player/play';
 
         const headers = {
@@ -309,6 +327,9 @@ function WebPlayback(props) {
                 trackList[counter]["thumbs"] = "";
             } else {
                 trackList[counter]["thumbs"] = direction;
+            }
+            if(trackList[counter]["thumbs"] === "down") {
+                player.nextTrack();
             }
         }
     }
