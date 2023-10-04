@@ -432,16 +432,16 @@ function WebPlayback(props) {
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-row items-center my-2 w-full flex-wrap">
-                    <div className="flex flex-col justify-left mx-2 my-2">
+                <div className="flex flex-row items-center mb-2 w-full flex-wrap">
+                    <div className="flex flex-col justify-left mx-2 mt-2">
                         <ChatBox onSendMessage={(message) => { message !== "" && playRandomTracks(message) }}/>
                     </div>
-                    <div className="flex flex-col justify-right mx-2">
+                    <div className="flex flex-col justify-right mx-2 mt-2">
                         <Button onClick={() => { playTracks(["spotify:track:3TGRqZ0a2l1LRblBkJoaDx"]) }}>CMM</Button>
                     </div>
                 </div>
                 <div className="flex flex-row justify-left items-center w-full"> 
-                    <div className="flex flex-col mx-2">
+                    <div className="flex flex-col mx-2 mb-2">
                         <div className="text-gray-500 text-sm">
                             DEBUG: We are on seed number {seedNumber}, track {counter + 1} / {Object.keys(trackList).length}
                         </div>
