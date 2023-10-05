@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Slider } from "./ui/slider"
 
 // Define the prop type
 interface SongPositionSliderProps {
@@ -10,26 +11,23 @@ interface SongPositionSliderProps {
 function SongPositionSlider({ onPositionChange, duration, position }: SongPositionSliderProps) {
 
   // Handle position change
-  const handlePositionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newPosition = parseFloat(event.target.value);
-    position = newPosition;
-    onPositionChange(newPosition);
+  const handlePositionChange = (values: number[]) => {
+    if(values[0] !== duration){
+      const newPosition = values[0];
+      position = newPosition;
+      onPositionChange(newPosition);
+    } else {
+      values[0] = duration - 1000;
+    }
   };
 
   return (
-    <div>
-      <label htmlFor="positionSlider">Position in Song:</label>
-      <input
-        type="range"
-        id="positionSlider"
-        name="positionSlider"
-        min="0"
-        max={duration}
-        step={Math.floor(duration / 1000)}
-        value={position.toString()} // Ensure value is a string
-        onChange={handlePositionChange}
-      />
-      <span>{formatTime(position)} / {formatTime(duration)}</span>
+    <div className="flex flex-row items-center" style={{ minWidth: '200px' }}>
+      <div className='pb-1'>{formatTime(position)}</div>
+      <div className="w-full px-4">
+        <Slider defaultValue={[position]} value={[position]} min={0} max={duration} step={Math.floor(duration / 1000)} onValueChange={handlePositionChange}/>
+      </div>
+      <div className='pb-1'>{formatTime(duration)}</div>
     </div>
   );
 }

@@ -12,6 +12,7 @@ import {TbPlaylist} from "react-icons/tb"
 
 export default function CardDemo() {
     return (
+        <div className="flex items-center justify-center h-screen">
         <div className="flex justify-center">
             <Card className="w-full">
             <div className="flex justify-center items-center w-full pt-5 mb-0">
@@ -25,6 +26,7 @@ export default function CardDemo() {
                 <LoginButton />
             </CardContent>
             </Card> 
-      </div>     
+      </div> 
+      </div>    
     )
   }

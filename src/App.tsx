@@ -21,17 +21,21 @@ function App() {
   }, []);
 
   return (
-      <div className='dark bg-background text-foreground flex h-screen justify-center items-center'>
-        <div className="button-container" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh'}}>
-          {token !== '' && <WebPlayer token={token}/>}
-          {Cookies.get('loggedIn') === 'true' ? (
-            <SpotifyButton />
+    <div>
+      <div className='dark bg-background text-foreground h-screen'>
+        <div className="flex flex-col justify-center items-center w-full">
+          {token !== '' && <WebPlayer token={token}/>}  
+        </div>
+        <div className="flex justify-center items-center w-full">
+            {Cookies.get('loggedIn') === 'true' ? (
+                <SpotifyButton />
           ) : (
-            <LoginCard />
+              <LoginCard />
           )
           }
         </div>
       </div>
+    </div>
   );
 }
 
