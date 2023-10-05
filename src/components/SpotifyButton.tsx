@@ -1,12 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
 import querystring from 'querystring';
-import { generateRandomString } from '../utils/Utils';
+import { generateRandomString, logOut } from '../utils/Utils';
+import {Button} from './ui/button'
 import Cookies from 'js-cookie';
+import {BsSpotify} from 'react-icons/bs'
 
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
 const REDIRECT_URI = 'http://localhost:9090/redirect';
 
-class LoginButton extends Component {
+class LoginButton extends React.Component<{}, {loggedIn: boolean}> {
   constructor(props) {
     super(props);
 
@@ -18,7 +20,7 @@ class LoginButton extends Component {
   handleLoginClick = () => {
     const state = generateRandomString(16);
     Cookies.set("state", state, { path: "/" });
-    const scope = 'user-read-private user-read-email user-read-playback-state user-modify-playback-state user-read-currently-playing streaming';
+    const scope = 'streaming user-read-private user-read-email';
 
     const queryParams = {
       response_type: 'code',
@@ -34,17 +36,20 @@ class LoginButton extends Component {
   };
 
   handleLogoutClick = () => {
-    Cookies.set("loggedIn", 'false', { path: "/" });
-    window.location.href = "/";
+    logOut();
   }
 
   render() {
     return (
       <div>
         {this.state.loggedIn ? (
-          <button onClick={this.handleLogoutClick}>Logout</button>
+          <Button onClick={this.handleLogoutClick}>Logout</Button>
         ) : (
-          <button onClick={this.handleLoginClick}>Login with Spotify</button>
+          <Button onClick={this.handleLoginClick} 
+          className='flex justify-center items-center font-bold w-full'>
+            <BsSpotify size={22} className='mr-3'/>
+            <p>Login with Spotify</p>
+          </Button>
         )}
       </div>
     );

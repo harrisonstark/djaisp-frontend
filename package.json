@@ -2,20 +2,37 @@
   "name": "djaisp-frontend",
   "version": "1.0.0",
   "private": true,
+  "main": "src/index.tsx",
   "dependencies": {
+    "@radix-ui/react-slider": "^1.1.2",
+    "@radix-ui/react-slot": "^1.0.2",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^29.5.5",
+    "@types/node": "^20.6.2",
+    "@types/react": "^18.2.22",
+    "@types/react-dom": "^18.2.7",
     "axios": "^1.5.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
     "js-cookie": "^3.0.5",
+    "lucide-react": "^0.279.0",
     "querystring": "^0.2.1",
     "react": "^18.2.0",
     "react-cookie": "^6.1.1",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.11.0",
     "react-router-dom": "^6.15.0",
     "react-scripts": "5.0.1",
+    "tailwind-merge": "^1.14.0",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5.2.2",
     "universal-cookie": "^6.1.1",
     "web-vitals": "^2.1.4"
+  },
+  "overrides": {
+    "typescript": "^5.2.2"
   },
   "scripts": {
     "start": "set PORT=9090&& react-scripts start",
@@ -41,5 +58,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "tailwindcss": "^3.3.3"
   }
 }
