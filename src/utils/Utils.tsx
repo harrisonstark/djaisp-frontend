@@ -34,6 +34,7 @@ export function logIn(user_id, email) {
 }
 
 export function logOut() {
+  // TODO: add the rest of the cookies
   Cookies.remove("loggedIn");
   Cookies.remove("email");
   Cookies.remove("user_id");

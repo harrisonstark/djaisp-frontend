@@ -11,8 +11,10 @@ import {BsPlayCircleFill,
         BsHandThumbsUpFill,
         BsHandThumbsDown,
         BsHandThumbsDownFill,
-        BsLightningFill,
-        BsLightning} 
+        BsHourglass,
+        BsHourglassTop,
+        BsHourglassSplit,
+        BsHourglassBottom} 
 from 'react-icons/bs'
 
 import ChatBox from './ChatBox';
@@ -52,6 +54,10 @@ const counterFromCookie = Cookies.get("counter") || 0;
 
 let counter = parseInt(counterFromCookie);
 
+const seedSizeFromCookie = Cookies.get("seedSize") || 0;
+
+let seedSize = parseInt(seedSizeFromCookie);
+
 let screenMessage = "Instance not active. Transfer your playback using your Spotify app if it does not automatically.";
 
 function WebPlayback(props) {
@@ -89,7 +95,7 @@ function WebPlayback(props) {
         window.onSpotifyWebPlaybackSDKReady = () => {
 
             const player = new window.Spotify.Player({
-                name: 'DJAISP',
+                name: 'MAISTRO',
                 getOAuthToken: cb => { cb(props.token); },
                 volume: Cookies.get("volume") || 0.5
             });
@@ -104,7 +110,6 @@ function WebPlayback(props) {
             });
 
             player.addListener('player_state_changed', ( state => {
-
                 if (!state) {
                     return;
                 }
@@ -125,22 +130,6 @@ function WebPlayback(props) {
         };
         
     }, []);
-
-    useEffect(() => {
-        const handleBeforeUnload = async () => {
-            if (player) {
-                player.disconnect();
-            }
-        };
-    
-        // Add the "beforeunload" event listener when the component mounts
-        window.addEventListener('beforeunload', handleBeforeUnload);
-    
-        // Remove the event listener when the component unmounts
-        return () => {
-          window.removeEventListener('beforeunload', handleBeforeUnload);
-        };
-    }, []);
     
     let counting;
 
@@ -156,7 +145,8 @@ function WebPlayback(props) {
       }
     };
   
-    const stop = () => {
+    const stop = (paused = Cookies.get("wasPaused")) => {
+      Cookies.set("wasPaused", paused, "/");
       clearInterval(counting);
       counting = null;
     };
@@ -169,24 +159,35 @@ function WebPlayback(props) {
       }
       // Clean up the timer when the component unmounts
       return () => {
-        stop();
+        stop(is_paused);
       };
     }, [is_paused]);
+
+    useEffect(() => {
+        function cleanUp() {
+            if(player){
+                player.pause();
+                player.disconnect();
+            }
+        }
+          return () => cleanUp();
+      }, []);
 
     useEffect(() => {
         try {
             if(prev_track["id"] !== current_track["id"] && prev_track["name"] !== "" && seedNumber > 0){
                 counter++;
             }
-            prev_track = current_track;
+            if(current_track["id"] !== null){
+                prev_track = current_track;
+            }
         } catch (error) {
-            console.error("something broke");
-            counter = 0;
-            seedNumber = 0;
-            trackList = {};
-            Cookies.set("counter", 0, { path: "/" });
-            Cookies.set("seedNumber", 0, { path: "/" });
-            Cookies.set("trackList", {}, { path: "/" });
+            if(current_track === null) {
+                setTrack(prev_track);
+                if(player){
+                    player.togglePlay();
+                }
+            }
         }
         if(Object.keys(trackList).length > 1 && seedNumber > 0){
             if(counter < 0) {
@@ -285,7 +286,7 @@ function WebPlayback(props) {
         } else {
             queryParams += `message=${message}`
         }
-        axios.get(`http://localhost:8989/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
+        axios.get(`https://mmlngy5gds.loclx.io/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
         .then((response) => {
             if(response.data?.status){
                 console.error("We had a problem, sorry!");
@@ -293,6 +294,8 @@ function WebPlayback(props) {
                 Cookies.set("seedGenres", response.data.seed_genres, { path: "/" });
                 seedNumber = response.data.seed_number;
                 Cookies.set("seedNumber", seedNumber, { path: "/" });
+                seedSize = response.data.songs.length
+                Cookies.set("seedSize", seedSize, { path: "/" });
                 playTracks(response.data.songs);
             }
         })
@@ -303,8 +306,6 @@ function WebPlayback(props) {
 
     useEffect(() => {
         const apiUrl = 'https://api.spotify.com/v1/me/player';
-
-        
 
         const headers = {
         'Authorization': `Bearer ${props.token}`
@@ -323,8 +324,8 @@ function WebPlayback(props) {
             if(error.message === "Request failed with status code 404"){
                 screenMessage = "Loading...";
             } else if(error.message === "Request failed with status code 401"){
-                screenMessage = "Refreshing token, your page will reload, please wait...";
-                axios.put(`http://localhost:8989/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
+                screenMessage = "Refreshing token, please wait...";
+                axios.put(`http://mmlngy5gds.loclx.io/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
                 .then(() => {
                     window.location.href = "/";
                 })
@@ -349,11 +350,15 @@ function WebPlayback(props) {
     }
 
     function isLastSong() {
-        return Object.keys(trackList).length > 3 && Object.keys(trackList).length === counter + 1;
+        return Object.keys(trackList).length === seedSize && Object.keys(trackList).length === counter + 1;
+    }
+
+    function isFirstSong() {
+        return counter === 0;
     }
     
     function toggleThumbs(direction) {
-        if(Object.keys(trackList).length !== 0 && seedNumber > 0){
+        if(isRecommending()){
             const currentDirection = trackList[counter]["thumbs"];
             if(currentDirection === direction){
                 trackList[counter]["thumbs"] = "";
@@ -427,7 +432,7 @@ function WebPlayback(props) {
                         <div className="flex flex-row justify-center flex-shrink-0 py-2">
                             <div className="flex flex-col justify-center">
                                 <div className="flex flex-row justify-center items-center mr-8"> 
-                                    {isRecommending() ? (isLastSong() ? <BsLightningFill color="#22C55E" size={24}/> : <BsLightningFill size={24}/>) : <BsLightning size={24}/> }
+                                    {isRecommending() ? (isLastSong() ? <BsHourglassBottom color="#22C55E" size={24}/> : (isFirstSong() ? <BsHourglassTop size={24}/> : <BsHourglassSplit size={24}/>)) : <BsHourglass size={24}/> }
                                     <div className="flex flex-col w-full pl-3 justify-center">
                                         <VolumeSlider onVolumeChange={handleVolumeChange} />
                                     </div>
@@ -441,7 +446,7 @@ function WebPlayback(props) {
                         <ChatBox onSendMessage={(message) => { message !== "" && playRandomTracks(message) }}/>
                     </div>
                     <div className="flex flex-col justify-right mx-2 mt-2">
-                        <Button onClick={() => { playTracks(["spotify:track:3TGRqZ0a2l1LRblBkJoaDx"]) }}>CMM</Button>
+                        <Button onClick={() => {playTracks(["spotify:track:3TGRqZ0a2l1LRblBkJoaDx"]) }}>CMM</Button>
                     </div>
                 </div>
                 <div className="flex flex-row justify-left items-center w-full"> 
