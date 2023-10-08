@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Cookies from 'js-cookie';
 import { Slider } from "./ui/slider"
-import { BsFillVolumeMuteFill, BsFillVolumeOffFill, BsFillVolumeUpFill } from 'react-icons/bs'
+import { BsFillVolumeDownFill, BsFillVolumeMuteFill, BsFillVolumeOffFill, BsFillVolumeUpFill } from 'react-icons/bs'
 
 // Define the prop type
 interface VolumeSliderProps {
@@ -35,7 +35,7 @@ function VolumeSlider({ onVolumeChange }: VolumeSliderProps) {
   return (
     <div className='flex justify-center items-center' style={{ minWidth: '120px' }}>
       <div onClick={handleToggleMute} className="pr-4">
-                {isMuted ? <BsFillVolumeMuteFill className="hover:fill-zinc-700" size={24} /> : volume === 0 ? <BsFillVolumeOffFill className="hover:fill-zinc-700" size={24} /> : <BsFillVolumeUpFill className="hover:fill-zinc-700" size={24} />}
+                {isMuted ? <BsFillVolumeMuteFill className="hover:fill-zinc-700" size={24} /> : volume === 0 ? <BsFillVolumeOffFill className="hover:fill-zinc-700" size={24} /> : volume <= .2 ? <BsFillVolumeDownFill className="hover:fill-zinc-700" size={24} /> : <BsFillVolumeUpFill className="hover:fill-zinc-700" size={24} />}
       </div>
       <Slider disabled={isMuted} defaultValue={[volume]} value={[volume]} step={0.01} max={1} onValueChange={handleVolumeChange} className="w-full"/>
     </div>
