@@ -3,18 +3,19 @@ import axios from 'axios'
 import Cookies from 'js-cookie';
 import SpotifyButton from './components/SpotifyButton'
 import WebPlayer from './components/WebPlayer'
+import { Chat } from './components/chat/chat'
 import React, { useEffect, useState } from 'react';
 
 function App() {
   const [token, setToken] = useState('');
 
   async function refreshToken() {
-    await axios.put(`https://mmlngy5gds.loclx.io/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
+    await axios.put(`http://localhost:8989/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
     getToken();
   }
 
   async function getToken() {
-    const response = await axios.get(`https://mmlngy5gds.loclx.io/get_credentials?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
+    const response = await axios.get(`http://localhost:8989/get_credentials?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
     setToken(response.data["access_token"]);
   }
 
@@ -31,14 +32,20 @@ function App() {
     }
   }, []);
   return (
-    <div>
-      <div className='dark bg-background text-foreground h-screen'>
+    <div className="dark bg-background text-foreground h-screen overflow-y-scroll">
+      <div className='dark bg-background text-foreground'>
         <div className="flex flex-col justify-center items-center w-full">
-          {token !== '' && <WebPlayer key={token} token={token} />}
+          {token !== '' && 
+          (
+          <div className='w-full h-full'>
+            <WebPlayer key={token} token={token} />
+            <Chat />
+          </div>)
+          }
         </div>
         <div className="flex justify-center items-center w-full">
           {Cookies.get('loggedIn') === 'true' ? (
-            <SpotifyButton />
+            <div />
           ) : (
             <LoginCard />
           )}

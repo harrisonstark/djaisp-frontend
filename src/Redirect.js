@@ -10,7 +10,7 @@ function Redirect() {
     const state = queryParams['state'];
     const code = queryParams['code'];
     if(code && state && Cookies.get('state') === state){
-        axios.get(`https://mmlngy5gds.loclx.io/authorize?code=${code}`)
+        axios.get(`http://localhost:8989/authorize?code=${code}`)
         .then((response) => {
             logIn(response.data.user_id, response.data.email);
         })

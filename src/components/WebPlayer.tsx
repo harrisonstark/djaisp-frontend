@@ -20,6 +20,7 @@ from 'react-icons/bs'
 import ChatBox from './ChatBox';
 import { logOut } from '../utils/Utils';
 import { Button } from './ui/button';
+import { Input } from "./ui/input"
 
 declare global {
     interface Window {
@@ -286,7 +287,7 @@ function WebPlayback(props) {
         } else {
             queryParams += `message=${message}`
         }
-        axios.get(`https://mmlngy5gds.loclx.io/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
+        axios.get(`http://localhost:8989/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
         .then((response) => {
             if(response.data?.status){
                 console.error("We had a problem, sorry!");
@@ -325,7 +326,7 @@ function WebPlayback(props) {
                 screenMessage = "Loading...";
             } else if(error.message === "Request failed with status code 401"){
                 screenMessage = "Refreshing token, please wait...";
-                axios.put(`http://mmlngy5gds.loclx.io/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
+                axios.put(`http://localhost:8989/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
                 .then(() => {
                     window.location.href = "/";
                 })
@@ -382,66 +383,64 @@ function WebPlayback(props) {
             </>)
     } else {
         return (
-            <>
-                <div className="w-full bg-zinc-800 inset-x-0 top-0 flex flex-wrap items-center justify-center">
-                    <div className="flex flex-col justify-center items-center">
+            <div className="z-[1000] sticky top-0 left-0 w-full">
+                <header className=" bg-zinc-800 flex min-[100px]:flex-col md:flex-row min-[100px]:justify-center md:justify-between relative  items-center">
+                    <div className="flex min-[100px]:justify-center md:justify-self-start min-[100px]:w-full md:w-1/5  max-h-24 text-clip items-center">
                         <div className="flex flex-row px-2 py-2"> 
                             <div className='rounded-lg'>
                                 {current_track?.album?.images[0] ? (
-                                    <img src={current_track.album.images[0].url} className="max-w-16 max-h-16 bg-blue-400 object-cover rounded-lg" alt="" />
+                                    <img src={current_track.album.images[0].url} className="min-w-16 max-w-16 h-16 bg-blue-400 object-cover rounded-lg" alt="" />
                                 ) : (<></>)}
                             </div>
-                            <div className="flex flex-col pl-4 justify-center">
+                            <div className="flex flex-col pl-4 justify-center ">
                                 {current_track?.name && current_track?.artists[0]?.name ? (
-                                    <div>
-                                        <div id="sample-title">{current_track.name}</div>
-                                        <div id="sample-artist">{current_track.artists[0].name}</div>
+                                    <div className="overflow-hidden">
+                                        <div>{current_track.name}</div>
+                                        <div>{current_track.artists[0].name}</div>
                                     </div>
                                 ) : (<></>)}
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-row flex-wrap justify-center">
-                        <div className="flex flex-row justify-center flex-grow py-2 px-8">
-                            <div className="flex flex-col w-1/2 items-center justify-center">
-                                <div className='flex flex-row items-center justify-center gap-4 pb-1'>   
-                                    <button className="btn-thumbs-down" onClick={() => {toggleThumbs("down")}} >
-                                        { isThumbs("down") ? <BsHandThumbsDownFill className="hover:fill-zinc-700" size={24}/> : 
-                                            <BsHandThumbsDown className="hover:fill-zinc-700" size={24}/>}
-                                        </button>
-                                        <button className="btn-spotify" onClick={() => { player.previousTrack() && counter-- && counter-- }} >
-                                            <BsFillSkipStartFill className="hover:fill-zinc-700" size={24} />
-                                        </button>
-                                        <button className="btn-spotify" onClick={() => { player.togglePlay() }} >
-                                            { is_paused ? <BsPlayCircleFill className="hover:fill-zinc-700" size={24}/> : 
-                                            <BsPauseCircleFill className="hover:fill-zinc-700" size={24}/> }
-                                        </button>
-                                        <button className="btn-spotify" onClick={() => { player.nextTrack() }} >
-                                            <BsFillSkipEndFill className="hover:fill-zinc-700" size={24} />
-                                        </button>
-                                        <button className="btn-thumbs-up" onClick={() => {toggleThumbs("up")}} >
-                                            { isThumbs("up") ? <BsHandThumbsUpFill className="hover:fill-zinc-700" size={24}/> : 
-                                            <BsHandThumbsUp className="hover:fill-zinc-700" size={24}/>}
-                                        </button>
-                                </div>
-                                <div className='items-center justify-center'>
-                                    <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position}/>
-                                </div>
+                    <div className="py-2 min-[100px]:w-full md:w-1/2 md:absolute md:start-1/4">
+                        <div className="flex  flex-col w-full items-center justify-center">
+                            <div className='flex flex-row items-center w-full justify-center gap-4 pb-1'>   
+                                <button className="btn-thumbs-down" onClick={() => {toggleThumbs("down")}} >
+                                    { isThumbs("down") ? <BsHandThumbsDownFill className="hover:fill-zinc-700" size={24}/> : 
+                                        <BsHandThumbsDown className="hover:fill-zinc-700" size={24}/>}
+                                    </button>
+                                    <button className="btn-spotify" onClick={() => { player.previousTrack() && counter-- && counter-- }} >
+                                        <BsFillSkipStartFill className="hover:fill-zinc-700" size={24} />
+                                    </button>
+                                    <button className="btn-spotify" onClick={() => { player.togglePlay() }} >
+                                        { is_paused ? <BsPlayCircleFill className="hover:fill-zinc-700" size={24}/> : 
+                                        <BsPauseCircleFill className="hover:fill-zinc-700" size={24}/> }
+                                    </button>
+                                    <button className="btn-spotify" onClick={() => { player.nextTrack() }} >
+                                        <BsFillSkipEndFill className="hover:fill-zinc-700" size={24} />
+                                    </button>
+                                    <button className="btn-thumbs-up" onClick={() => {toggleThumbs("up")}} >
+                                        { isThumbs("up") ? <BsHandThumbsUpFill className="hover:fill-zinc-700" size={24}/> : 
+                                        <BsHandThumbsUp className="hover:fill-zinc-700" size={24}/>}
+                                    </button>
+                            </div>
+                            <div className='items-center justify-center min-[100px]:w-4/5 sm:w-3/4 md:w-3/5'>
+                                <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position}/>
                             </div>
                         </div>
-                        <div className="flex flex-row justify-center flex-shrink-0 py-2">
-                            <div className="flex flex-col justify-center">
-                                <div className="flex flex-row justify-center items-center mr-8"> 
-                                    {isRecommending() ? (isLastSong() ? <BsHourglassBottom color="#22C55E" size={24}/> : (isFirstSong() ? <BsHourglassTop size={24}/> : <BsHourglassSplit size={24}/>)) : <BsHourglass size={24}/> }
-                                    <div className="flex flex-col w-full pl-3 justify-center">
-                                        <VolumeSlider onVolumeChange={handleVolumeChange} />
-                                    </div>
+                    </div>
+                    <div className="flex flex-row justify-center flex-shrink-0 py-2">
+                        <div className="flex flex-col justify-center">
+                            <div className="flex flex-row justify-center items-center mr-8"> 
+                                {isRecommending() ? (isLastSong() ? <BsHourglassBottom color="#22C55E" size={24}/> : (isFirstSong() ? <BsHourglassTop size={24}/> : <BsHourglassSplit size={24}/>)) : <BsHourglass size={24}/> }
+                                <div className="flex flex-col w-full pl-3 justify-center">
+                                    <VolumeSlider onVolumeChange={handleVolumeChange} />
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div className="flex flex-row items-center mb-2 w-full flex-wrap">
+                </header>
+                {/* <div className="flex flex-row items-center mb-2 w-full flex-wrap">
                     <div className="flex flex-col justify-left mx-2 mt-2">
                         <ChatBox onSendMessage={(message) => { message !== "" && playRandomTracks(message) }}/>
                     </div>
@@ -455,8 +454,9 @@ function WebPlayback(props) {
                             DEBUG: We are on seed number {seedNumber}, track {counter + 1} / {Object.keys(trackList).length}
                         </div>
                     </div>
-                    </div>
-            </>
+                </div> */}
+                
+            </div>
         );
     }
 }
