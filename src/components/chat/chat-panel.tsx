@@ -4,7 +4,6 @@ import { type UseChatHelpers } from 'ai/react'
 import { Button } from '../ui/button'
 import { PromptForm } from './prompt-form'
 import { ButtonScrollToBottom } from './button-scroll-to-bottom'
-import { BsStopCircle } from 'react-icons/bs'
 import { FiRefreshCw } from 'react-icons/fi'
 
 export interface ChatPanelProps
@@ -24,9 +23,7 @@ export interface ChatPanelProps
 export function ChatPanel({
   id,
   isLoading,
-  stop,
   append,
-  reload,
   input,
   setInput,
   messages
@@ -39,24 +36,13 @@ export function ChatPanel({
           {isLoading ? (
             <Button
               variant="outline"
-              onClick={() => stop()}
               className="bg-background"
+              disabled
             >
-              <BsStopCircle className="mr-2" />
-              Stop generating
+              <FiRefreshCw className="mr-2" />
+              Loading...
             </Button>
-          ) : (
-            messages?.length > 0 && (
-              <Button
-                variant="outline"
-                onClick={() => reload()}
-                className="bg-background"
-              >
-                <FiRefreshCw className="mr-2" />
-                Regenerate response
-              </Button>
-            )
-          )}
+          ) : ((<></>))}
         </div>
         <div className="space-y-4 border-t bg-background px-4 py-2 shadow-lg sm:rounded-t-xl sm:border md:py-4">
             <PromptForm

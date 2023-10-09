@@ -7,15 +7,15 @@ import { BsArrowRight } from 'react-icons/bs'
 const exampleMessages = [
   {
     heading: 'Say Hi to MAISTRO',
-    message: `Hi MAISTRO!`
+    message: `Hi MAISTRO! I'm feeling lucky, give me some random music of your choosing.`
   },
   {
-    heading: 'Get Ready to Working Out',
-    message: 'Can you give me something to get me ready to work out?'
+    heading: 'Get Ready to Work Out',
+    message: "I'm about to go to the gym!"
   },
   {
     heading: 'Long Day at The Office',
-    message: `I just got back from a long day at work and would like something to relax to.`
+    message: `I just got back from a long day at work.`
   }
 ]
 

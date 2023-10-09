@@ -4,7 +4,7 @@ import { Message } from 'ai'
 
 import { cn } from '../../lib/utils'
 
-import { BiSolidUserCircle, BiBot } from 'react-icons/bi'
+import { BiSolidUserCircle, BiMusic } from 'react-icons/bi'
 
 
 export interface ChatMessageProps {
@@ -14,7 +14,7 @@ export interface ChatMessageProps {
 export function ChatMessage({ message, ...props }: ChatMessageProps) {
   return (
     <div
-      className={cn('group relative mb-4 flex items-start md:-ml-12')}
+      className={cn('group relative flex items-start md:-ml-12')}
       {...props}
     >
       <div
@@ -25,7 +25,7 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
             : 'bg-primary text-primary-foreground'
         )}
       >
-        {message.role === 'user' ? <BiSolidUserCircle /> : <BiBot />}
+        {message.role === 'user' ? <BiSolidUserCircle /> : <BiMusic />}
       </div>
       <div className="w-full flex-1 px-1 ml-4 space-y-2 overflow-hidden">
         {/* WE DONT NEED MARKDOWN RESPONSES!!!!!!!!!! */}
@@ -68,7 +68,7 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
             }
           }}
         > */}
-          {message.content}
+          {message.content.replace(/^"(.*)"$/, '$1')}
         {/* </MemoizedReactMarkdown> */}
 
         {/* WE DO NOT NEED TO COPY CHAT MESSAGES ATM */}
