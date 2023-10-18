@@ -53,7 +53,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
       }
     })
   return (
-    <div className="flex justify-center -z-50">
+    <div className="flex justify-center items-center -z-50">
       <div className={cn('min-[100px]:w-full md:w-3/4 lg:w-1/2 pb-[200px] pt-4 md:pt-10', className)}>
         {messages.length ? (
           <>
@@ -63,17 +63,19 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
         ) : (
           <EmptyScreen setInput={setInput} />
         )}
+        <ChatPanel
+          id={id}
+          isLoading={isLoading}
+          stop={stop}
+          append={append}
+          reload={reload}
+          messages={messages}
+          input={input}
+          setInput={setInput}
+        />
       </div>
-      <ChatPanel
-        id={id}
-        isLoading={isLoading}
-        stop={stop}
-        append={append}
-        reload={reload}
-        messages={messages}
-        input={input}
-        setInput={setInput}
-      />
+      
+      
 
       {/* <Dialog open={previewTokenDialog} onOpenChange={setPreviewTokenDialog}>
         <DialogContent>

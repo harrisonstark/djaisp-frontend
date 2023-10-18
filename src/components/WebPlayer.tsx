@@ -385,7 +385,7 @@ function WebPlayback(props) {
         return (
             <div className="z-[1000] sticky top-0 left-0 w-full">
                 <header className=" bg-zinc-800 flex min-[100px]:flex-col md:flex-row min-[100px]:justify-center md:justify-between relative  items-center">
-                    <div className="flex min-[100px]:justify-center md:justify-self-start min-[100px]:w-full md:w-1/5  max-h-24 text-clip items-center">
+                    <div className="flex min-[100px]:justify-center md:justify-self-start min-[100px]:w-full md:max-w-sm max-h-24 text-clip items-center border-2 border-yellow-300">
                         <div className="flex flex-row px-2 py-2"> 
                             <div className='rounded-lg'>
                                 {current_track?.album?.images[0] ? (
@@ -402,9 +402,9 @@ function WebPlayback(props) {
                             </div>
                         </div>
                     </div>
-                    <div className="py-2 min-[100px]:w-full md:w-1/2 md:absolute md:start-1/4">
+                    <div className="py-2 min-[100px]:w-full md:w-1/3 md:absolute md:start-1/3 border-2 border-yellow-300">
                         <div className="flex  flex-col w-full items-center justify-center">
-                            <div className='flex flex-row items-center w-full justify-center gap-4 pb-1'>   
+                            <div className='flex flex-row items-center w-full justify-center gap-4 pb-1 border-2 border-green-300'>   
                                 <button className="btn-thumbs-down" onClick={() => {toggleThumbs("down")}} >
                                     { isThumbs("down") ? <BsHandThumbsDownFill className="hover:fill-zinc-700" size={24}/> : 
                                         <BsHandThumbsDown className="hover:fill-zinc-700" size={24}/>}
@@ -424,7 +424,7 @@ function WebPlayback(props) {
                                         <BsHandThumbsUp className="hover:fill-zinc-700" size={24}/>}
                                     </button>
                             </div>
-                            <div className='items-center justify-center min-[100px]:w-4/5 sm:w-3/4 md:w-3/5'>
+                            <div className='items-center justify-center min-[100px]:w-4/5 sm:w-3/4 md:w-full border-2 border-green-300'>
                                 <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position}/>
                             </div>
                         </div>
