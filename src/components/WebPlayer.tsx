@@ -127,7 +127,14 @@ function WebPlayback(props) {
             }));
 
             player.connect();
-
+            window.addEventListener('message', function (event) {
+                const data = event.data;
+                if (data.command === 'messageCommand') {
+                    const message = data.message;
+                    // TODO: SEND LOADING CIRCLE!!!!!!!!!
+                    playRandomTracks(message);
+                }
+            });
         };
         
     }, []);
@@ -287,7 +294,7 @@ function WebPlayback(props) {
         } else {
             queryParams += `message=${message}`
         }
-        axios.get(`http://localhost:8989/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
+        axios.get(`https://k4tbefuguv.loclx.io/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
         .then((response) => {
             if(response.data?.status){
                 console.error("We had a problem, sorry!");
@@ -326,7 +333,7 @@ function WebPlayback(props) {
                 screenMessage = "Loading...";
             } else if(error.message === "Request failed with status code 401"){
                 screenMessage = "Refreshing token, please wait...";
-                axios.put(`http://localhost:8989/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
+                axios.put(`https://k4tbefuguv.loclx.io/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
                 .then(() => {
                     window.location.href = "/";
                 })
@@ -376,16 +383,16 @@ function WebPlayback(props) {
         return (
             <>
                 <div>
-                    <div className="main-wrapper">
+                    <div className="main-wrapper flex justify-center items-center">
                         <b> {screenMessage} </b>
                     </div>
                 </div>
             </>)
-    } else {
+    } else { // TODO: PRINT ALL ARTISTS SEPARATED BY COMMAS, LINK ALBUM WITH IMAGE, SONG WITH SONG, AND ARTISTS WITH ARTISTS
         return (
             <div className="z-[1000] sticky top-0 left-0 w-full">
-                <header className=" bg-zinc-800 flex min-[100px]:flex-col md:flex-row min-[100px]:justify-center md:justify-between relative  items-center">
-                    <div className="flex min-[100px]:justify-center md:justify-self-start min-[100px]:w-full md:max-w-sm max-h-24 text-clip items-center border-2 border-yellow-300">
+                <header className=" bg-zinc-800 flex min-[100px]:flex-col md:flex-row min-[100px]:justify-center md:justify-between relative items-center">
+                    <div className="flex min-[100px]:justify-center md:justify-self-start min-[100px]:w-full md:w-1/5  max-h-24 text-clip items-center">
                         <div className="flex flex-row px-2 py-2"> 
                             <div className='rounded-lg'>
                                 {current_track?.album?.images[0] ? (
@@ -396,15 +403,15 @@ function WebPlayback(props) {
                                 {current_track?.name && current_track?.artists[0]?.name ? (
                                     <div className="overflow-hidden">
                                         <div>{current_track.name}</div>
-                                        <div>{current_track.artists[0].name}</div>
+                                        <div>{current_track.artists[0].name}</div> 
                                     </div>
                                 ) : (<></>)}
                             </div>
                         </div>
                     </div>
-                    <div className="py-2 min-[100px]:w-full md:w-1/3 md:absolute md:start-1/3 border-2 border-yellow-300">
-                        <div className="flex  flex-col w-full items-center justify-center">
-                            <div className='flex flex-row items-center w-full justify-center gap-4 pb-1 border-2 border-green-300'>   
+                    <div className="py-2 min-[100px]:w-full md:w-1/2 md:absolute md:start-1/4">
+                        <div className="flex flex-col w-full items-center justify-center">
+                            <div className='flex flex-row items-center w-full justify-center gap-4 pb-1'>   
                                 <button className="btn-thumbs-down" onClick={() => {toggleThumbs("down")}} >
                                     { isThumbs("down") ? <BsHandThumbsDownFill className="hover:fill-zinc-700" size={24}/> : 
                                         <BsHandThumbsDown className="hover:fill-zinc-700" size={24}/>}
@@ -440,22 +447,6 @@ function WebPlayback(props) {
                         </div>
                     </div>
                 </header>
-                {/* <div className="flex flex-row items-center mb-2 w-full flex-wrap">
-                    <div className="flex flex-col justify-left mx-2 mt-2">
-                        <ChatBox onSendMessage={(message) => { message !== "" && playRandomTracks(message) }}/>
-                    </div>
-                    <div className="flex flex-col justify-right mx-2 mt-2">
-                        <Button onClick={() => {playTracks(["spotify:track:3TGRqZ0a2l1LRblBkJoaDx"]) }}>CMM</Button>
-                    </div>
-                </div>
-                <div className="flex flex-row justify-left items-center w-full"> 
-                    <div className="flex flex-col mx-2 mb-2">
-                        <div className="text-gray-500 text-sm">
-                            DEBUG: We are on seed number {seedNumber}, track {counter + 1} / {Object.keys(trackList).length}
-                        </div>
-                    </div>
-                </div> */}
-                
             </div>
         );
     }

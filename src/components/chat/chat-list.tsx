@@ -14,7 +14,7 @@ export function ChatList({ messages }: ChatList) {
   }
 
   return (
-    <div className="z-0 border-2 px-8 py-10 rounded-lg w-full flex flex-col justify-center">
+    <div className="z-0 w-full mx-auto flex flex-col justify-center px-8 mx-4">
       {messages.map((message, index) => (
         <div key={index}>
           <ChatMessage message={message} />
