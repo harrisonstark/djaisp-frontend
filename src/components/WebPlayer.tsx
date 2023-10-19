@@ -294,7 +294,7 @@ function WebPlayback(props) {
         } else {
             queryParams += `message=${message}`
         }
-        axios.get(`https://k4tbefuguv.loclx.io/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
+        axios.get(`http://localhost:8989/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
         .then((response) => {
             if(response.data?.status){
                 console.error("We had a problem, sorry!");
@@ -333,7 +333,7 @@ function WebPlayback(props) {
                 screenMessage = "Loading...";
             } else if(error.message === "Request failed with status code 401"){
                 screenMessage = "Refreshing token, please wait...";
-                axios.put(`https://k4tbefuguv.loclx.io/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
+                axios.put(`http://localhost:8989/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
                 .then(() => {
                     window.location.href = "/";
                 })
@@ -431,7 +431,7 @@ function WebPlayback(props) {
                                         <BsHandThumbsUp className="hover:fill-zinc-700" size={24}/>}
                                     </button>
                             </div>
-                            <div className='items-center justify-center min-[100px]:w-4/5 sm:w-3/4 md:w-full border-2 border-green-300'>
+                            <div className='items-center justify-center min-[100px]:w-4/5 sm:w-3/4 md:w-full'>
                                 <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position}/>
                             </div>
                         </div>

@@ -37,7 +37,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
         id,
         previewToken
       },
-      api: "https://k4tbefuguv.loclx.io/chat",
+      api: "http://localhost:8989/chat",
       onResponse(response) {
         // display error on screen with toast
         if (response.status === 401 ) {
@@ -53,13 +53,13 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
       }
     })
   return (
-    <div className="flex justify-center items-center -z-50">
-      <div className={cn('min-[100px]:w-full md:w-3/4 lg:w-1/2 pb-[200px] pt-4 md:pt-10', className)}>
+    <div className="flex justify-center items-center">
+      <div className={cn('min-[100px]:w-full md:w-3/4 lg:w-1/2 pb-[200px] max-w-2xl sm:pt-4 md:pt-10', className)}>
         {messages.length ? (
-          <div className="mx-auto max-w-2xl px-4">
-            <div className="rounded-lg border bg-background p-8 items-center align-center">
+          <div className="mx-auto">
+            <div className="z-1 flex justify-center items-center align-center">
               <ChatList messages={messages} />
-              <ChatScrollAnchor trackVisibility={isLoading} />
+              {/* <ChatScrollAnchor trackVisibility={isLoading} /> */}
             </div>
           </div>
         ) : (

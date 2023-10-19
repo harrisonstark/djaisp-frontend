@@ -29,9 +29,9 @@ export function ChatPanel({
   messages
 }: ChatPanelProps) {
   return (
-    <div className="fixed inset-x-0 bottom-0 overflow-auto">
+    <div className="z-[1000] flex justify-center inset-x-0 absolute bottom-0 min-[100px]:max-w-full  sm:max-w-xl md:max-w-2xl mx-auto">
       <ButtonScrollToBottom />
-      <div className="mx-auto sm:max-w-2xl sm:px-4">
+      <div className=" w-full -ml-4">
         <div className="flex h-10 items-center justify-center">
           {isLoading ? (
             <Button
@@ -44,7 +44,8 @@ export function ChatPanel({
             </Button>
           ) : ((<></>))}
         </div>
-        <div className="space-y-4 border-t bg-background px-4 py-2 shadow-lg sm:rounded-t-xl sm:border md:py-4">
+        <div className="bg-background h-max pb-2">
+        <div className="bg-background  mb-4 space-y-4 border-t px-4 py-2 shadow-lg sm:rounded-xl sm:border md:py-4">
             <PromptForm
                 onSubmit={async value => {
                 await append({
@@ -61,7 +62,8 @@ export function ChatPanel({
                 Test Footer
             </p> */}
         </div>
+        </div>
       </div>
-    </div>
+    </div>  
   )
 }

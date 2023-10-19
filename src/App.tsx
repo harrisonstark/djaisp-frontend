@@ -4,18 +4,19 @@ import Cookies from 'js-cookie';
 import SpotifyButton from './components/SpotifyButton'
 import WebPlayer from './components/WebPlayer'
 import { Chat } from './components/chat/chat'
+import SettingsButton from './components/SettingsButton'
 import React, { useEffect, useState } from 'react';
 
 function App() {
   const [token, setToken] = useState('');
 
   async function refreshToken() {
-    await axios.put(`https://k4tbefuguv.loclx.io/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
+    await axios.put(`http://localhost:8989/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
     getToken();
   }
 
   async function getToken() {
-    const response = await axios.get(`https://k4tbefuguv.loclx.io/get_credentials?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
+    const response = await axios.get(`http://localhost:8989/get_credentials?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
     setToken(response.data["access_token"]);
   }
 
@@ -40,6 +41,9 @@ function App() {
           <div className='w-full h-full'>
             <WebPlayer key={token} token={token} />
             <Chat />
+              <div className="min-[100px]:hidden md:flex mr-8 mb-8 absolute bottom-0 right-0 h-16 w-16">
+                  <SettingsButton />
+              </div>
           </div>)
           }
         </div>
