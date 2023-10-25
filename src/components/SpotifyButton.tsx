@@ -6,7 +6,7 @@ import Cookies from 'js-cookie';
 import {BsSpotify} from 'react-icons/bs'
 
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
-const REDIRECT_URI = 'https://kafrmcd72u.loclx.io/redirect';
+const REDIRECT_URI = 'https://fyrjjzjnhh.loclx.io/redirect';
 
 class LoginButton extends React.Component<{}, {loggedIn: boolean}> {
   constructor(props) {

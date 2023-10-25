@@ -10,12 +10,12 @@ function App() {
   const [token, setToken] = useState('');
 
   async function refreshToken() {
-    await axios.put(`https://k4tbefuguv.loclx.io/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
+    await axios.put(`https://g0rhlcm1fl.loclx.io/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
     getToken();
   }
 
   async function getToken() {
-    const response = await axios.get(`https://k4tbefuguv.loclx.io/get_credentials?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
+    const response = await axios.get(`https://g0rhlcm1fl.loclx.io/get_credentials?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
     setToken(response.data["access_token"]);
   }
 

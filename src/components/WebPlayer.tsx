@@ -294,7 +294,7 @@ function WebPlayback(props) {
         } else {
             queryParams += `message=${message}`
         }
-        axios.get(`https://k4tbefuguv.loclx.io/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
+        axios.get(`https://g0rhlcm1fl.loclx.io/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
         .then((response) => {
             if(response.data?.status){
                 console.error("We had a problem, sorry!");
@@ -333,7 +333,7 @@ function WebPlayback(props) {
                 screenMessage = "Loading...";
             } else if(error.message === "Request failed with status code 401"){
                 screenMessage = "Refreshing token, please wait...";
-                axios.put(`https://k4tbefuguv.loclx.io/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
+                axios.put(`https://g0rhlcm1fl.loclx.io/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
                 .then(() => {
                     window.location.href = "/";
                 })
