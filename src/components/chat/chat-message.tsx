@@ -14,12 +14,12 @@ export interface ChatMessageProps {
 export function ChatMessage({ message, ...props }: ChatMessageProps) {
   return (
     <div
-      className={cn('group relative flex items-start md:-ml-12')}
+      className={cn('group relative flex items-start')}
       {...props}
     >
       <div
         className={cn(
-          'flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-md border shadow',
+          'flex h-8 w-8 items-center justify-center rounded-md border-2 drop-shadow-md',
           message.role === 'user'
             ? 'bg-background'
             : 'bg-primary text-primary-foreground'

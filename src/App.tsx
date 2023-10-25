@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import SpotifyButton from './components/SpotifyButton'
 import WebPlayer from './components/WebPlayer'
 import { Chat } from './components/chat/chat'
+import SettingsButton from './components/SettingsButton'
 import React, { useEffect, useState } from 'react';
 
 function App() {
@@ -40,6 +41,9 @@ function App() {
           <div className='w-full h-full'>
             <WebPlayer key={token} token={token} />
             <Chat />
+              <div className="min-[100px]:hidden md:flex mr-8 mb-8 absolute bottom-0 right-0 h-16 w-16">
+                  <SettingsButton />
+              </div>
           </div>)
           }
         </div>

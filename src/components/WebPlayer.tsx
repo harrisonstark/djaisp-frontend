@@ -431,7 +431,7 @@ function WebPlayback(props) {
                                         <BsHandThumbsUp className="hover:fill-zinc-700" size={24}/>}
                                     </button>
                             </div>
-                            <div className='items-center justify-center min-[100px]:w-4/5 sm:w-3/4 md:w-3/5'>
+                            <div className='items-center justify-center min-[100px]:w-4/5 sm:w-3/4 md:w-full'>
                                 <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position}/>
                             </div>
                         </div>
