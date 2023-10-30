@@ -5,12 +5,13 @@ import { cn } from '../../lib/utils'
 import { ChatList } from './chat-list'
 import { ChatPanel } from './chat-panel'
 import { EmptyScreen } from './empty-screen'
-// Not sure what this anchor does yet
-import { ChatScrollAnchor } from './chat-scroll-anchor'
+// import { ChatScrollAnchor } from './chat-scroll-anchor' Not sure what this anchor does yet
 import { useLocalStorage } from '../../lib/hooks/use-local-storage'
+import Cookies from 'js-cookie';
 
 // import { useState } from 'react'
 import { useToast } from '../ui/use-toast'
+import { useEffect } from "react"
 
 
 
@@ -22,10 +23,16 @@ export interface ChatProps extends React.ComponentProps<'div'> {
 
 export function Chat({ id, initialMessages, className }: ChatProps) {
   const { toast } = useToast()
-  const [previewToken, setPreviewToken] = useLocalStorage<string | null>(
+  const [previewToken] = useLocalStorage<string | null>(
     'ai-token',
     null
   )
+  function showToastError(descriptionText){
+    toast({
+      title: "Error: Oops, I dropped my baton, please try again later.",
+      description: descriptionText,
+    })
+  }
   // May need this later
   // const [previewTokenDialog, setPreviewTokenDialog] = useState(IS_PREVIEW)
   // const [previewTokenInput, setPreviewTokenInput] = useState(previewToken ?? '')
@@ -37,21 +44,27 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
         id,
         previewToken
       },
-      api: "https://g0rhlcm1fl.loclx.io/chat",
+      api: "https://zyr4trcva3.loclx.io/chat",
       onResponse(response) {
-        // display error on screen with toast
-        if (response.status === 401 ) {
-            toast({
-                title: "Uh oh! Something went wrong.",
-                description: response.statusText,
-            })
-        }
-        else{
-          console.log("onResponse called");
-          console.log(response);
+        if (response.status === 401) {
+            showToastError(response.statusText);
         }
       }
     })
+  useEffect(() => {
+    if(messages.length && messages.length % 2 === 0) {
+      Cookies.set("userRecentMessage", JSON.stringify(messages[messages.length - 2]), { path: "/" });
+      Cookies.set("maistroRecentMessage", JSON.stringify(messages[messages.length - 1]), { path: "/" });
+    }
+  }, [messages]);
+  function getRecentMessages(){
+    messages.push(JSON.parse(Cookies.get("userRecentMessage")));
+    messages.push(JSON.parse(Cookies.get("maistroRecentMessage")));
+  }
+  if(messages.length === 0 && Cookies.get('userRecentMessage') && Cookies.get('maistroRecentMessage')) {
+    getRecentMessages();
+  }
+
   return (
     <div className="flex justify-center items-center">
       <div className={cn('min-[100px]:w-full md:w-3/4 lg:w-1/2 pb-[200px] max-w-2xl sm:pt-4 md:pt-10', className)}>

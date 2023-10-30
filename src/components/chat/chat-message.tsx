@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Message } from 'ai'
-
+import Cookies from 'js-cookie';
 
 import { cn } from '../../lib/utils'
 
@@ -25,7 +25,7 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
             : 'bg-primary text-primary-foreground'
         )}
       >
-        {message.role === 'user' ? <BiSolidUserCircle /> : <BiMusic />}
+        {message.role === 'user' ? Cookies.get('profilePicture') !== "" ? <div className="flex h-8 w-8 items-center justify-center rounded-md border-2 drop-shadow-md bg-background"> <img src={Cookies.get("profilePicture")}></img></div> : <BiSolidUserCircle /> : <BiMusic />}
       </div>
       <div className="w-full flex-1 px-1 ml-4 space-y-2 overflow-hidden">
         {/* WE DONT NEED MARKDOWN RESPONSES!!!!!!!!!! */}

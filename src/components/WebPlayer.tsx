@@ -17,10 +17,8 @@ import {BsPlayCircleFill,
         BsHourglassBottom} 
 from 'react-icons/bs'
 
-import ChatBox from './ChatBox';
 import { logOut } from '../utils/Utils';
-import { Button } from './ui/button';
-import { Input } from "./ui/input"
+import { toast } from './ui/use-toast';
 
 declare global {
     interface Window {
@@ -36,11 +34,14 @@ const track = {
     album: {
         images: [
             { url: "" }
-        ]
+        ],
+        uri: ""
     },
     artists: [
-        { name: "" }
-    ]
+        { name: "",
+          uri: "" }
+    ],
+    uri: ""
 }
 
 let prev_track = track;
@@ -116,6 +117,7 @@ function WebPlayback(props) {
                 }
                 
                 setTrack(state.track_window.current_track);
+                console.log(state.track_window.current_track);
                 setPaused(state.paused);
                 setPosition(state.position);
                 setDuration(state.duration);
@@ -131,7 +133,6 @@ function WebPlayback(props) {
                 const data = event.data;
                 if (data.command === 'messageCommand') {
                     const message = data.message;
-                    // TODO: SEND LOADING CIRCLE!!!!!!!!!
                     playRandomTracks(message);
                 }
             });
@@ -275,7 +276,7 @@ function WebPlayback(props) {
         .then(async () => {
             trackList = {};
             counter = 0;
-            prev_track = {name: "", album: {images: [{ url: "" }]}, artists: [{ name: "" }]};
+            prev_track = {name: "", album: {images: [{ url: "" }], uri: ""}, artists: [{ name: "", uri: "" }], uri: ""};
             for(let i = 0; i < uriList.length; i++){
                 trackList[i] = await getTrackFeatures(uriList[i].split(':')[2]);
             }
@@ -294,10 +295,13 @@ function WebPlayback(props) {
         } else {
             queryParams += `message=${message}`
         }
-        axios.get(`https://g0rhlcm1fl.loclx.io/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
+        axios.get(`https://zyr4trcva3.loclx.io/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
         .then((response) => {
             if(response.data?.status){
-                console.error("We had a problem, sorry!");
+                toast({
+                    title: "Error: Oops, I dropped my baton, please try again later.",
+                    description: response.statusText,
+                })
             } else {
                 Cookies.set("seedGenres", response.data.seed_genres, { path: "/" });
                 seedNumber = response.data.seed_number;
@@ -333,7 +337,7 @@ function WebPlayback(props) {
                 screenMessage = "Loading...";
             } else if(error.message === "Request failed with status code 401"){
                 screenMessage = "Refreshing token, please wait...";
-                axios.put(`https://g0rhlcm1fl.loclx.io/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
+                axios.put(`https://zyr4trcva3.loclx.io/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
                 .then(() => {
                     window.location.href = "/";
                 })
@@ -379,6 +383,11 @@ function WebPlayback(props) {
         }
     }
 
+    function uriToURL(uri) {
+        const splitURI = uri.split(":");
+        return uri === "" ? "" : splitURI[1] === "artists" ? "artist" : splitURI[1] + "/" + splitURI[2];
+    }
+
     if (!is_active) {
         return (
             <>
@@ -388,22 +397,35 @@ function WebPlayback(props) {
                     </div>
                 </div>
             </>)
-    } else { // TODO: PRINT ALL ARTISTS SEPARATED BY COMMAS, LINK ALBUM WITH IMAGE, SONG WITH SONG, AND ARTISTS WITH ARTISTS
+    } else {
         return (
             <div className="z-[1000] sticky top-0 left-0 w-full">
                 <header className=" bg-zinc-800 flex min-[100px]:flex-col md:flex-row min-[100px]:justify-center md:justify-between relative items-center">
                     <div className="flex min-[100px]:justify-center md:justify-self-start min-[100px]:w-full md:w-1/5  max-h-24 text-clip items-center">
-                        <div className="flex flex-row px-2 py-2"> 
-                            <div className='rounded-lg'>
-                                {current_track?.album?.images[0] ? (
-                                    <img src={current_track.album.images[0].url} className="min-w-16 max-w-16 h-16 bg-blue-400 object-cover rounded-lg" alt="" />
-                                ) : (<></>)}
-                            </div>
-                            <div className="flex flex-col pl-4 justify-center ">
-                                {current_track?.name && current_track?.artists[0]?.name ? (
-                                    <div className="overflow-hidden">
-                                        <div>{current_track.name}</div>
-                                        <div>{current_track.artists[0].name}</div> 
+                        <div className="flex flex-row px-2 w-full max-h-24"> 
+                            {current_track?.album?.images[0] ? ( 
+                                <a className="flex flex-col justify-center py-2 w-1/2 max-h-[80%]" href={"https://open.spotify.com/" + uriToURL(current_track.album.uri)} target="_blank">
+                                <img
+                                    src={current_track.album.images[0].url}
+                                    className="aspect-1 bg-blue-400 rounded-lg hover:opacity-70 transition-opacity duration-100"
+                                    alt=""
+                                />
+                                </a>
+                            ) : (<></>)}
+                            <div className="flex flex-col justify-center pl-4 w-1/2">
+                                {current_track?.name && current_track?.artists ? (
+                                    <div className="overflow-hidden inline truncate">
+                                        <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank"><span className="hover:underline">{current_track.name}</span></a>
+                                    <div>
+                                        {current_track.artists.map((artist, index) => (
+                                        <span key={index}>
+                                            {index > 0 && ', '}
+                                            <a href={"https://open.spotify.com/" + uriToURL(current_track.artists[index].uri)} target="_blank" rel="noopener noreferrer">
+                                                <span className="hover:underline inline truncate">{artist.name}</span>
+                                            </a>
+                                        </span>
+                                        ))}
+                                    </div>
                                     </div>
                                 ) : (<></>)}
                             </div>

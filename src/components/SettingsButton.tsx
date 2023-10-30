@@ -10,6 +10,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '../components/ui/tooltip'
 import {Button} from '../components/ui/button'
 import {BsFillGearFill} from 'react-icons/bs'
+import LoginButton from "./SpotifyButton"
 
 export default function SettingsButton() {
     return(
@@ -83,6 +84,9 @@ export default function SettingsButton() {
                                 </TooltipProvider>
                             </div>
                         </div>
+                    </div>
+                    <div className="pt-4">
+                        <LoginButton />
                     </div>
                 </SheetContent>
             </Sheet>

@@ -1,7 +1,6 @@
 import LoginCard from './components/LoginCard'
 import axios from 'axios'
 import Cookies from 'js-cookie';
-import SpotifyButton from './components/SpotifyButton'
 import WebPlayer from './components/WebPlayer'
 import { Chat } from './components/chat/chat'
 import SettingsButton from './components/SettingsButton'
@@ -11,13 +10,19 @@ function App() {
   const [token, setToken] = useState('');
 
   async function refreshToken() {
-    await axios.put(`https://g0rhlcm1fl.loclx.io/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
+    await axios.put(`https://zyr4trcva3.loclx.io/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
     getToken();
   }
 
   async function getToken() {
-    const response = await axios.get(`https://g0rhlcm1fl.loclx.io/get_credentials?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
+    const response = await axios.get(`https://zyr4trcva3.loclx.io/get_credentials?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
     setToken(response.data["access_token"]);
+    getProfilePictureURL();
+  }
+
+  async function getProfilePictureURL() {
+    const response = await axios.get(`https://zyr4trcva3.loclx.io/get_user_information?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
+    Cookies.set("profilePicture", response.data["url"], "/");
   }
 
   useEffect(() => {

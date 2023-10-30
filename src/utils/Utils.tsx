@@ -34,14 +34,17 @@ export function logIn(user_id, email) {
 }
 
 export function logOut() {
-  // TODO: add the rest of the cookies
   Cookies.remove("loggedIn");
-  Cookies.remove("email");
   Cookies.remove("user_id");
+  Cookies.remove("email");
   Cookies.remove("volume");
   Cookies.remove("trackList");
   Cookies.remove("counter");
   Cookies.remove("seedGenres");
   Cookies.remove("seedNumber");
+  Cookies.remove("seedSize");
+  Cookies.remove("userRecentMessage");
+  Cookies.remove("maistroRecentMessage");
+  Cookies.remove("profilePicture");
   window.location.href = "/";
 }

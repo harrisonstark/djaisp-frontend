@@ -41,7 +41,7 @@ export function PromptForm({
     <form
       onSubmit={async e => {
         e.preventDefault()
-        if (!input?.trim()) {
+        if (isLoading || !input?.trim()) {
           return
         }
         window.postMessage({ command: 'messageCommand', message: input }, '*');
