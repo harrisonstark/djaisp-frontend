@@ -17,6 +17,8 @@ import {BsPlayCircleFill,
         BsHourglassBottom} 
 from 'react-icons/bs'
 
+import {Stack0, Stack1, Stack2, Stack3, Stack4} from '../components/ui/stacks'
+
 import { logOut } from '../utils/Utils';
 import { toast } from './ui/use-toast';
 
@@ -295,7 +297,7 @@ function WebPlayback(props) {
         } else {
             queryParams += `message=${message}`
         }
-        axios.get(`https://zyr4trcva3.loclx.io/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
+        axios.get(`http://localhost:8989/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
         .then((response) => {
             if(response.data?.status){
                 toast({
@@ -337,7 +339,7 @@ function WebPlayback(props) {
                 screenMessage = "Loading...";
             } else if(error.message === "Request failed with status code 401"){
                 screenMessage = "Refreshing token, please wait...";
-                axios.put(`https://zyr4trcva3.loclx.io/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
+                axios.put(`http://localhost:8989/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
                 .then(() => {
                     window.location.href = "/";
                 })
@@ -363,6 +365,12 @@ function WebPlayback(props) {
 
     function isLastSong() {
         return Object.keys(trackList).length === seedSize && Object.keys(trackList).length === counter + 1;
+    }
+
+    // TODO: This needs double checking
+    // i want to see if we are over halfway through the current seed
+    function isOverHalfway(){
+        return counter > (Object.keys(trackList).length / 2) && counter < Object.keys(trackList).length;
     }
 
     function isFirstSong() {
@@ -402,25 +410,71 @@ function WebPlayback(props) {
             <div className="z-[1000] sticky top-0 left-0 w-full">
                 <header className=" bg-zinc-800 flex min-[100px]:flex-col md:flex-row min-[100px]:justify-center md:justify-between relative items-center">
                     <div className="flex min-[100px]:justify-center md:justify-self-start min-[100px]:w-full md:w-1/5  max-h-24 text-clip items-center">
-                        <div className="flex flex-row px-2 w-full max-h-24"> 
+                        <div className="flex flex-row px-2 w-full max-h-24 min-[100px]:justify-center lg:justify-start"> 
                             {current_track?.album?.images[0] ? ( 
-                                <a className="flex flex-col justify-center py-2 w-1/2 max-h-[80%]" href={"https://open.spotify.com/" + uriToURL(current_track.album.uri)} target="_blank">
-                                <img
-                                    src={current_track.album.images[0].url}
-                                    className="aspect-1 bg-blue-400 rounded-lg hover:opacity-70 transition-opacity duration-100"
-                                    alt=""
-                                />
-                                </a>
+                                <div className="p-2 w-20 h-20 flex-shrink-0">
+                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.album.uri)} target="_blank">
+                                    <img
+                                        src={current_track.album.images[0].url}
+                                        className="aspect-1  rounded-lg hover:opacity-70 transition-opacity duration-100"
+                                        alt=""
+                                    />
+                                    </a>
+                                </div>
                             ) : (<></>)}
-                            <div className="flex flex-col justify-center pl-4 w-1/2">
+                            <div className="flex flex-col justify-center ml-2 w-fit overflow-x-hidden">
                                 {current_track?.name && current_track?.artists ? (
                                     <div className="overflow-hidden inline truncate">
-                                        <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank"><span className="hover:underline">{current_track.name}</span></a>
+                                        {/*If the song length is > 25 characters, scroll the text. Yes i know there are 4 copies
+                                        thats how it works*/}
+                                        {current_track.name.length > 25 ? (
+                                            <div className="relative flex overflow-x-hidden">
+                                                <div className="animate-marquee whitespace-nowrap">
+                                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank">
+                                                        <span className="hover:underline mx-4">
+                                                        {current_track.name}
+                                                        </span>
+                                                    </a>
+                                                </div>
+                                                <div className="animate-marquee whitespace-nowrap">
+                                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank">
+                                                        <p className="hover:underline mx-4">
+                                                        {current_track.name}
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                                <div className="animate-marquee2 whitespace-nowrap">
+                                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank">
+                                                        <span className="hover:underline">
+                                                        {current_track.name}
+                                                        </span>
+                                                    </a>
+                                                </div>
+                                                <div className="animate-marquee2 whitespace-nowrap">
+                                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank">
+                                                        <span className="hover:underline">
+                                                        {current_track.name}
+                                                        </span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        ) :
+                                        (
+                                            <div>
+                                            <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank">
+                                                <span className="hover:underline">
+                                                {current_track.name}
+                                                </span>
+                                            </a>
+                                            </div>  
+                                        )}
+                                        
                                     <div>
                                         {current_track.artists.map((artist, index) => (
                                         <span key={index}>
                                             {index > 0 && ', '}
-                                            <a href={"https://open.spotify.com/" + uriToURL(current_track.artists[index].uri)} target="_blank" rel="noopener noreferrer">
+                                            <a href={"https://open.spotify.com/" + uriToURL(current_track.artists[index].uri)}
+                                                target="_blank" rel="noopener noreferrer" title={artist.name}>
                                                 <span className="hover:underline inline truncate">{artist.name}</span>
                                             </a>
                                         </span>
@@ -461,7 +515,17 @@ function WebPlayback(props) {
                     <div className="flex flex-row justify-center flex-shrink-0 py-2">
                         <div className="flex flex-col justify-center">
                             <div className="flex flex-row justify-center items-center mr-8"> 
-                                {isRecommending() ? (isLastSong() ? <BsHourglassBottom color="#22C55E" size={24}/> : (isFirstSong() ? <BsHourglassTop size={24}/> : <BsHourglassSplit size={24}/>)) : <BsHourglass size={24}/> }
+                                {/* {isRecommending() ? (isLastSong() ? <BsHourglassBottom color="#22C55E" size={24}/> : (isFirstSong() ? <BsHourglassTop size={24}/> : <BsHourglassSplit size={24}/>)) : <BsHourglass size={24}/> } */}
+                                {/* New visuals for seed/batch progress */}
+                                {isRecommending() ?
+                                 (isLastSong() ? <Stack1 /> : (
+                                    isFirstSong() ? <Stack4 /> : (
+                                        isOverHalfway() ? <Stack2 /> : (
+                                            <Stack3 />
+                                        )
+                                    )
+                                   )
+                                   ) : <Stack0 />}
                                 <div className="flex flex-col w-full pl-3 justify-center">
                                     <VolumeSlider onVolumeChange={handleVolumeChange} />
                                 </div>

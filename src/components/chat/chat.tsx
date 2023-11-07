@@ -44,7 +44,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
         id,
         previewToken
       },
-      api: "https://zyr4trcva3.loclx.io/chat",
+      api: "http://localhost:8989/chat",
       onResponse(response) {
         if (response.status === 401) {
             showToastError(response.statusText);

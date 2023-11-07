@@ -10,18 +10,18 @@ function App() {
   const [token, setToken] = useState('');
 
   async function refreshToken() {
-    await axios.put(`https://zyr4trcva3.loclx.io/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
+    await axios.put(`http://localhost:8989/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
     getToken();
   }
 
   async function getToken() {
-    const response = await axios.get(`https://zyr4trcva3.loclx.io/get_credentials?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
+    const response = await axios.get(`http://localhost:8989/get_credentials?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
     setToken(response.data["access_token"]);
     getProfilePictureURL();
   }
 
   async function getProfilePictureURL() {
-    const response = await axios.get(`https://zyr4trcva3.loclx.io/get_user_information?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
+    const response = await axios.get(`http://localhost:8989/get_user_information?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
     Cookies.set("profilePicture", response.data["url"], "/");
   }
 
@@ -37,6 +37,14 @@ function App() {
       return () => clearInterval(intervalId);
     }
   }, []);
+
+  // Handle which layout is selected A, B, C, or D
+  const [selectedLayout, setSelectedLayout] = useState('A');
+
+  const handleSelectedLayoutChange = (layout) => {
+    setSelectedLayout(layout);
+  };
+
   return (
     <div className="dark bg-background text-foreground h-screen overflow-y-scroll">
       <div className='dark bg-background text-foreground'>
@@ -47,7 +55,10 @@ function App() {
             <WebPlayer key={token} token={token} />
             <Chat />
               <div className="min-[100px]:hidden md:flex mr-8 mb-8 absolute bottom-0 right-0 h-16 w-16">
-                  <SettingsButton />
+                  <SettingsButton  
+                    selectedLayout={selectedLayout}
+                    onSelectedLayoutChange={handleSelectedLayoutChange}
+                  />
               </div>
           </div>)
           }
