@@ -1,5 +1,5 @@
 import { UseChatHelpers } from 'ai/react'
-import * as React from 'react'
+import React, {useRef} from "react"
 import Textarea from 'react-textarea-autosize'
 import { Button } from '../ui/button'
 import { GoPaperAirplane } from 'react-icons/go'
@@ -37,6 +37,11 @@ export function PromptForm({
     }
   };
 
+
+  function scrollToBottom(){
+    window.scrollTo(0, document.body.scrollHeight || document.documentElement.scrollHeight);
+  }
+
   return (
     <form
       onSubmit={async e => {
@@ -44,6 +49,7 @@ export function PromptForm({
         if (isLoading || !input?.trim()) {
           return
         }
+        scrollToBottom();
         window.postMessage({ command: 'messageCommand', message: input }, '*');
         setInput('')
         await onSubmit(input)

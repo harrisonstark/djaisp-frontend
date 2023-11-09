@@ -15,55 +15,55 @@ import { useEffect } from "react"
 
 
 
-// const IS_PREVIEW = process.env.VERCEL_ENV === 'preview'
-export interface ChatProps extends React.ComponentProps<'div'> {
-  initialMessages?: Message[]
-  id?: string
-}
+// // const IS_PREVIEW = process.env.VERCEL_ENV === 'preview'
+// export interface ChatProps extends React.ComponentProps<'div'> {
+//   initialMessages?: Message[]
+//   id?: string
+// }
 
-export function Chat({ id, initialMessages, className }: ChatProps) {
-  const { toast } = useToast()
-  const [previewToken] = useLocalStorage<string | null>(
-    'ai-token',
-    null
-  )
-  function showToastError(descriptionText){
-    toast({
-      title: "Error: Oops, I dropped my baton, please try again later.",
-      description: descriptionText,
-    })
-  }
-  // May need this later
-  // const [previewTokenDialog, setPreviewTokenDialog] = useState(IS_PREVIEW)
-  // const [previewTokenInput, setPreviewTokenInput] = useState(previewToken ?? '')
-  const { messages, append, reload, stop, isLoading, input, setInput } =
-    useChat({
-      initialMessages,
-      id,
-      body: {
-        id,
-        previewToken
-      },
-      api: "http://localhost:8989/chat",
-      onResponse(response) {
-        if (response.status === 401) {
-            showToastError(response.statusText);
-        }
-      }
-    })
-  useEffect(() => {
-    if(messages.length && messages.length % 2 === 0) {
-      Cookies.set("userRecentMessage", JSON.stringify(messages[messages.length - 2]), { path: "/" });
-      Cookies.set("maistroRecentMessage", JSON.stringify(messages[messages.length - 1]), { path: "/" });
-    }
-  }, [messages]);
-  function getRecentMessages(){
-    messages.push(JSON.parse(Cookies.get("userRecentMessage")));
-    messages.push(JSON.parse(Cookies.get("maistroRecentMessage")));
-  }
-  if(messages.length === 0 && Cookies.get('userRecentMessage') && Cookies.get('maistroRecentMessage')) {
-    getRecentMessages();
-  }
+export function Chat({messages, setInput, className}) {
+//   const { toast } = useToast()
+//   const [previewToken] = useLocalStorage<string | null>(
+//     'ai-token',
+//     null
+//   )
+//   function showToastError(descriptionText){
+//     toast({
+//       title: "Error: Oops, I dropped my baton, please try again later.",
+//       description: descriptionText,
+//     })
+//   }
+//   // May need this later
+//   // const [previewTokenDialog, setPreviewTokenDialog] = useState(IS_PREVIEW)
+//   // const [previewTokenInput, setPreviewTokenInput] = useState(previewToken ?? '')
+//   const { messages, append, reload, stop, isLoading, input, setInput } =
+//     useChat({
+//       initialMessages,
+//       id,
+//       body: {
+//         id,
+//         previewToken
+//       },
+//       api: "http://localhost:8989/chat",
+//       onResponse(response) {
+//         if (response.status === 401) {
+//             showToastError(response.statusText);
+//         }
+//       }
+//     })
+//   useEffect(() => {
+//     if(messages.length && messages.length % 2 === 0) {
+//       Cookies.set("userRecentMessage", JSON.stringify(messages[messages.length - 2]), { path: "/" });
+//       Cookies.set("maistroRecentMessage", JSON.stringify(messages[messages.length - 1]), { path: "/" });
+//     }
+//   }, [messages]);
+//   function getRecentMessages(){
+//     messages.push(JSON.parse(Cookies.get("userRecentMessage")));
+//     messages.push(JSON.parse(Cookies.get("maistroRecentMessage")));
+//   }
+//   if(messages.length === 0 && Cookies.get('userRecentMessage') && Cookies.get('maistroRecentMessage')) {
+//     getRecentMessages();
+//   }
 
   return (
     <div className="flex justify-center items-center">
@@ -78,7 +78,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
         ) : (
           <EmptyScreen setInput={setInput} />
         )}
-        <ChatPanel
+        {/* <ChatPanel
           id={id}
           isLoading={isLoading}
           stop={stop}
@@ -87,7 +87,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
           messages={messages}
           input={input}
           setInput={setInput}
-        />
+        /> */}
       </div>
       
       

@@ -2,7 +2,7 @@ import * as React from "react"
 import { UseChatHelpers } from 'ai/react'
 
 import { Button } from '../ui/button'
-import { BsArrowRight } from 'react-icons/bs'
+import { BsArrowRight, BsInfoCircle } from 'react-icons/bs'
 
 const exampleMessages = [
   {
@@ -46,6 +46,10 @@ export function EmptyScreen({ setInput }: Pick<UseChatHelpers, 'setInput'>) {
             </Button>
           ))}
         </div>
+        <span className="mt-4 flex items-center text-muted-foreground">
+              Click the <BsInfoCircle className="mx-2"  size={20}/> icon next to the volume slider for more info on how MAISTRO works.
+        </span>
+        
       </div>
     </div>
   )

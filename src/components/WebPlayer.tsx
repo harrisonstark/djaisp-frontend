@@ -14,10 +14,20 @@ import {BsPlayCircleFill,
         BsHourglass,
         BsHourglassTop,
         BsHourglassSplit,
-        BsHourglassBottom} 
+        BsHourglassBottom,
+        BsInfoCircle} 
 from 'react-icons/bs'
 
 import {Stack0, Stack1, Stack2, Stack3, Stack4} from '../components/ui/stacks'
+
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+  } from "../components/ui/dialog"
 
 import { logOut } from '../utils/Utils';
 import { toast } from './ui/use-toast';
@@ -407,7 +417,7 @@ function WebPlayback(props) {
             </>)
     } else {
         return (
-            <div className="z-[1000] sticky top-0 left-0 w-full">
+            <div className="z-[1000] sticky top-0 left-0 w-full" style={{scrollbarGutter: "stable"}}>
                 <header className=" bg-zinc-800 flex min-[100px]:flex-col md:flex-row min-[100px]:justify-center md:justify-between relative items-center">
                     <div className="flex min-[100px]:justify-center md:justify-self-start min-[100px]:w-full md:w-1/5  max-h-24 text-clip items-center">
                         <div className="flex flex-row px-2 w-full max-h-24 min-[100px]:justify-center lg:justify-start"> 
@@ -528,6 +538,19 @@ function WebPlayback(props) {
                                    ) : <Stack0 />}
                                 <div className="flex flex-col w-full pl-3 justify-center">
                                     <VolumeSlider onVolumeChange={handleVolumeChange} />
+                                </div>
+                                <div className="pl-3 pt-1 self-center hover:opacity-50">
+                                    <Dialog>
+                                        <DialogTrigger><BsInfoCircle size={18} /></DialogTrigger>
+                                        <DialogContent>
+                                        <DialogHeader>
+                                            <DialogTitle>MAISTRO Info</DialogTitle>
+                                            <DialogDescription>
+                                            TODO: Add info on how MAISTRO works
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        </DialogContent>
+                                    </Dialog>   
                                 </div>
                             </div>
                         </div>

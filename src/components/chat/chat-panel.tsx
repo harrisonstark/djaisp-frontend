@@ -29,7 +29,7 @@ export function ChatPanel({
   messages
 }: ChatPanelProps) {
   return (
-    <div className="z-[1000] flex justify-center inset-x-0 absolute bottom-0 min-[100px]:max-w-full  sm:max-w-xl md:max-w-2xl mx-auto">
+    <div className="z-[1000] flex justify-center fixed inset-x-0 absolute bottom-0 min-[100px]:max-w-full  sm:max-w-xl md:max-w-2xl mx-auto">
       <ButtonScrollToBottom />
       <div className=" w-full -ml-4">
         <div className="flex h-10 items-center justify-center">

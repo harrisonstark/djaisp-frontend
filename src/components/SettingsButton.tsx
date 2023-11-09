@@ -12,9 +12,13 @@ import {Button} from '../components/ui/button'
 import {BsFillGearFill} from 'react-icons/bs'
 import LoginButton from "./SpotifyButton"
 
-export default function SettingsButton({ selectedLayout, onSelectedLayoutChange }) {
+export default function SettingsButton({ selectedLayout, onSelectedLayoutChange, selectedTheme, onSelectedThemeChange }) {
     const handleLayoutClick = (layout) => {
         onSelectedLayoutChange(layout);
+    };
+
+    const handleThemeChange = (theme) => {
+        onSelectedThemeChange(theme);
     };
 
     return(
@@ -32,7 +36,7 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange 
                         Modify the look and feel of M<em>AI</em>STRO here.
                     </SheetDescription>
                     </SheetHeader>
-                    <div>
+                    <div className="relative h-full">
                         <h1 className="text-background text-medium font-bold pt-10 pb-4">Change App Layout</h1>
                         <div className="grid grid-cols-2 grid-row-2 gap-4 text-background">
                             <div className={`border rounded-lg h-20 hover:-translate-y-1 duration-200
@@ -100,10 +104,27 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange 
                                 </TooltipProvider>
                             </div>
                         </div>
+
+                        <h1 className="text-background text-medium font-bold pt-10 pb-4">Change App Theme</h1>
+                        <div className="grid grid-cols-2 grid-row-1 gap-4 text-background">
+                            <div className={`border rounded-lg hover:-translate-y-1 duration-200 text-background h-8 flex justify-center items-center
+                                    ${selectedTheme === 'dark' ? 'border-primary' : ''}`}
+                                    onClick={() => handleThemeChange('dark')}
+                            >
+                                Dark
+                            </div>
+                            <div className={`rounded-lg bg-slate-200 hover:-translate-y-1 duration-200 text-foreground h-8 flex justify-center items-center
+                                    ${selectedTheme === 'light' ? 'border-2 border-primary' : ''}`}
+                                    onClick={() => handleThemeChange('light')}
+                            >
+                                Light
+                            </div>
+                        </div>
+                        <div className="mb-14 w-full bottom-0 absolute ">
+                            <LoginButton />
+                        </div>
                     </div>
-                    <div className="pt-4">
-                        <LoginButton />
-                    </div>
+                    
                 </SheetContent>
             </Sheet>
         </div>
