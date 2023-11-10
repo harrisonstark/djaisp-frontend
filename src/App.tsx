@@ -120,6 +120,7 @@ function App({ id, initialMessages, className }: ChatProps) {
                 messages={messages}
                 input={input}
                 setInput={setInput}
+                currentAppLayout={selectedLayout}
               />
               <div className="min-[100px]:hidden md:flex mr-8 mb-8 absolute bottom-0 right-0 h-16 w-16">
                   <SettingsButton  
@@ -136,7 +137,7 @@ function App({ id, initialMessages, className }: ChatProps) {
           {token !== '' && selectedLayout === 'B' ?
           (
           <div className='flex flex-col w-full h-screen'>
-            <div className="z-[100] sticky inset-x-0 top-0 md:pt-40 bg-background">
+            <div className="z-[100] sticky inset-x-0 top-0 md:pt-28 bg-background">
               <ChatPanel
                 id={id}
                 isLoading={isLoading}

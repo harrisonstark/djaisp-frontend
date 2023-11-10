@@ -38,7 +38,7 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
                     </SheetHeader>
                     <div className="relative h-full">
                         <h1 className="text-background text-medium font-bold pt-10 pb-4">Change App Layout</h1>
-                        <div className="grid grid-cols-2 grid-row-2 gap-4 text-background">
+                        <div className="grid grid-cols-2 grid-row-1 gap-4 text-background">
                             <div className={`border rounded-lg h-20 hover:-translate-y-1 duration-200
                                 ${selectedLayout === 'A' ? 'border border-primary' : ''}`}
                                 onClick={() => handleLayoutClick('A')}
@@ -68,38 +68,6 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
                                        </div>
                                     </TooltipTrigger>
                                     <TooltipContent>Layout B</TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            </div>
-                            <div className={`border rounded-lg h-20 hover:translate-y-1 duration-200
-                                ${selectedLayout === 'C' ? 'border border-primary' : ''}`}
-                                onClick={() => handleLayoutClick('C')}
-                            >
-                                <TooltipProvider>
-                                    <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        {/* INSERT LAYOUT C PREVIEW IMAGE HERE */}
-                                       <div className="w-full h-full flex justify-center items-center">
-                                        C
-                                       </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="bottom">Layout C</TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            </div>
-                            <div className={`border rounded-lg h-20 hover:translate-y-1 duration-200
-                                ${selectedLayout === 'D' ? 'border border-primary' : ''}`}
-                                onClick={() => handleLayoutClick('D')}
-                            >
-                                <TooltipProvider>
-                                    <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        {/* INSERT LAYOUT D PREVIEW IMAGE HERE */}
-                                       <div className="w-full h-full flex justify-center items-center">
-                                        D
-                                       </div>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="bottom">Layout D</TooltipContent>
                                     </Tooltip>
                                 </TooltipProvider>
                             </div>

@@ -17,7 +17,8 @@ export interface ChatPanelProps
     | 'input'
     | 'setInput'
   > {
-  id?: string
+  id?: string,
+  currentAppLayout?: string,
 }
 
 export function ChatPanel({
@@ -26,13 +27,14 @@ export function ChatPanel({
   append,
   input,
   setInput,
-  messages
+  messages,
+  currentAppLayout
 }: ChatPanelProps) {
   return (
-    <div className="z-[1000] flex justify-center fixed inset-x-0 absolute bottom-0 min-[100px]:max-w-full  sm:max-w-xl md:max-w-2xl mx-auto">
+    <div className="z-[1000]   flex justify-center fixed inset-x-0 absolute bottom-0 min-[100px]:max-w-full  sm:max-w-2xl mx-auto">
       <ButtonScrollToBottom />
-      <div className=" w-full -ml-4">
-        <div className="flex h-10 items-center justify-center">
+      <div className={`w-full ${currentAppLayout == "A" ? "-ml-4 bg-background" : ""}`}>
+        <div className="flex  items-center justify-center">
           {isLoading ? (
             <Button
               variant="outline"
@@ -44,8 +46,8 @@ export function ChatPanel({
             </Button>
           ) : ((<></>))}
         </div>
-        <div className="bg-background h-max pb-2">
-        <div className="bg-background  mb-4 space-y-4 border-t px-4 py-2 shadow-lg sm:rounded-xl sm:border md:py-4">
+        <div className="bg-background h-max">
+        <div className={`bg-background ${currentAppLayout == "A" ? "mb-14 " : ""} space-y-4 border-t shadow-lg sm:rounded-xl sm:border-0`}>
             <PromptForm
                 onSubmit={async value => {
                 await append({
