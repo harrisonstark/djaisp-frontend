@@ -19,13 +19,16 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
     >
       <div
         className={cn(
-          'flex h-8 w-8 items-center justify-center rounded-md border-2 drop-shadow-md',
+          'flex h-8 w-8 items-center justify-center',
           message.role === 'user'
             ? 'bg-background'
-            : 'bg-primary text-primary-foreground'
+            : 'bg-primary text-primary-foreground border-2 rounded-lg'
         )}
       >
-        {message.role === 'user' ? Cookies.get('profilePicture') !== "" ? <div className="flex h-8 w-8 items-center justify-center rounded-md border-2 drop-shadow-md bg-background"> <img src={Cookies.get("profilePicture")}></img></div> : <BiSolidUserCircle /> : <BiMusic />}
+        {message.role === 'user' ? Cookies.get('profilePicture') !== "" ?
+         <div className="flex w-full h-full items-center justify-center  bg-background">
+           <img className="w-full h-full rounded-lg border-2" src={Cookies.get("profilePicture")}>
+        </img></div> : <BiSolidUserCircle /> : <BiMusic />}
       </div>
       <div className="w-full flex-1 px-1 ml-4 space-y-2 overflow-hidden">
         {/* WE DONT NEED MARKDOWN RESPONSES!!!!!!!!!! */}

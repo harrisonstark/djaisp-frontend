@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import Cookies from 'js-cookie';
 import {
     Sheet,
     SheetContent,
@@ -51,7 +52,7 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
                                         A
                                        </div>
                                     </TooltipTrigger>
-                                    <TooltipContent>Layout A</TooltipContent>
+                                    <TooltipContent>Media Player on Top</TooltipContent>
                                     </Tooltip>
                                 </TooltipProvider>
                             </div>
@@ -67,7 +68,7 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
                                         B
                                        </div>
                                     </TooltipTrigger>
-                                    <TooltipContent>Layout B</TooltipContent>
+                                    <TooltipContent>Media Player on Bottom</TooltipContent>
                                     </Tooltip>
                                 </TooltipProvider>
                             </div>
