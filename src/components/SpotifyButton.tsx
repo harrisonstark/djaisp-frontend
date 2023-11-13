@@ -44,10 +44,11 @@ class LoginButton extends React.Component<{}, {loggedIn: boolean}> {
       <div>
         {this.state.loggedIn ? (
           <Button onClick={this.handleLogoutClick}
-            className="text-foreground font-bold w-full">Logout</Button>
+            className="text-background font-bold w-full bg-foreground border border-background">Log out
+          </Button>
         ) : (
           <Button onClick={this.handleLoginClick} 
-          className='flex justify-center items-center font-bold w-full'>
+            className='flex justify-center items-center font-bold w-full'>
             <BsSpotify size={22} className='mr-3'/>
             <p>Login with Spotify</p>
           </Button>

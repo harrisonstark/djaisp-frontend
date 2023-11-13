@@ -56,7 +56,7 @@ export function PromptForm({
       }}
       ref={formRef}
     >
-      <div className="flex justify-between gap-2 items-center max-h-60 w-full flex-row overflow-hidden bg-background px-2 sm:rounded-md sm:border sm:px-2">
+      <div className="flex justify-between gap-2 items-center max-h-60 w-full flex-row bg-background px-2 sm:rounded-md sm:border sm:px-2">
         <div className="w-full flex justify-center items-center">
           <Textarea
             ref={inputRef}

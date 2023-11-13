@@ -32,7 +32,7 @@ export function ChatPanel({
 }: ChatPanelProps) {
   return (
     <div className="z-[1000]   flex justify-center fixed inset-x-0 absolute bottom-0 min-[100px]:max-w-full  sm:max-w-2xl mx-auto">
-      <ButtonScrollToBottom />
+      {/* <ButtonScrollToBottom /> */}
       <div className={`w-full ${currentAppLayout == "A" ? "-ml-4 bg-background" : ""}`}>
         <div className="flex  items-center justify-center">
           {isLoading ? (

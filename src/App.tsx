@@ -16,6 +16,11 @@ export interface ChatProps extends React.ComponentProps<'div'> {
   id?: string
 }
 
+function getWindowDimensions() {
+  const { innerWidth: width, innerHeight: height } = window;
+  return width;
+}
+
 function App({ id, initialMessages, className }: ChatProps) {
   const [token, setToken] = useState('');
 
@@ -62,6 +67,20 @@ function App({ id, initialMessages, className }: ChatProps) {
     setSelectedTheme(theme);
   };
 
+
+  const [windowDimensions, setWindowDimensions] = useState(
+    getWindowDimensions()
+  );
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   // Items required for ChatPanel
   const [previewToken] = useLocalStorage<string | null>(
     'ai-token',
@@ -106,7 +125,7 @@ function App({ id, initialMessages, className }: ChatProps) {
       <div className='dark bg-background text-foreground'>
         <div className="flex flex-col justify-center items-center w-full">
           {/* Option A Selected */}
-          {token !== '' && selectedLayout === 'A' ?
+          {token !== '' && (selectedLayout === 'A' || windowDimensions <= 900) ?
           (
           <div className='w-full h-full'>
             <WebPlayer key={token} token={token} />
@@ -122,7 +141,7 @@ function App({ id, initialMessages, className }: ChatProps) {
                 setInput={setInput}
                 currentAppLayout={selectedLayout}
               />
-              <div className="min-[100px]:hidden md:flex mr-8 mb-8 absolute bottom-0 right-0 h-16 w-16">
+              <div className="min-[100px]:hidden md:flex mr-14 mb-[4.5rem] absolute bottom-0 right-0 h-8 w-10">
                   <SettingsButton  
                     selectedLayout={selectedLayout}
                     onSelectedLayoutChange={handleSelectedLayoutChange}
@@ -134,7 +153,7 @@ function App({ id, initialMessages, className }: ChatProps) {
 
 
           {/* Option B Selected */}
-          {token !== '' && selectedLayout === 'B' ?
+          {token !== '' && (selectedLayout === 'B' && windowDimensions > 900)  ?
           (
           <div className='flex flex-col w-full h-screen'>
             <div className="z-[100] sticky inset-x-0 top-0 md:pt-28 bg-background">
@@ -149,7 +168,7 @@ function App({ id, initialMessages, className }: ChatProps) {
                 setInput={setInput}
               />
             </div>
-            <div className="z-[1000] min-[100px]:hidden md:flex mr-8 mt-12 absolute top-0 right-0 h-16 w-16">
+            <div className="z-[1000] min-[100px]:hidden md:flex mr-8 mt-16 absolute top-0 right-0 h-8 w-10">
                   <SettingsButton  
                     selectedLayout={selectedLayout}
                     onSelectedLayoutChange={handleSelectedLayoutChange}

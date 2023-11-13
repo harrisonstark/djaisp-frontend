@@ -90,6 +90,16 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
                             </div>
                         </div>
                         <div className="mb-14 w-full bottom-0 absolute ">
+                            {Cookies.get('profilePicture') !== "" ?
+                                <div className="flex flex-row justify-start items-center mb-4">
+                                    <div className="w-12 h-10">
+                                        <img className="w-full h-full border-2 rounded-lg" src={Cookies.get("profilePicture")}></img>
+                                    </div>
+                                    <div className="text-background pl-4">
+                                        {Cookies.get('user_id')}
+                                    </div>
+                                </div>
+                            : <div />}
                             <LoginButton />
                         </div>
                     </div>
