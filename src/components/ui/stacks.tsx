@@ -20,7 +20,11 @@ export const Stack0 = () => {
   );
 }
 
-export const Stack1 = () => {
+export const Stack1 = (props) => {
+  let strokeFill = "#D0E7D2";
+  if(props.selectedTheme == "dark"){
+    strokeFill = "white";
+  }
   return (
     <div className="hover:opacity-75">
       <TooltipProvider>
@@ -28,9 +32,9 @@ export const Stack1 = () => {
           <TooltipTrigger asChild>
             <svg width="29" height="34" viewBox="0 0 29 34" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g id="stackGroup">
-                  <rect id="stack4" x="0.5" y="0.5" width="28" height="6" rx="1.5" stroke="white"/>
-                  <rect id="stack3" x="0.5" y="9.5" width="28" height="6" rx="1.5" stroke="white"/>
-                  <rect id="stack2" x="0.5" y="18.5" width="28" height="6" rx="1.5" stroke="white"/>
+                  <rect id="stack4" x="0.5" y="0.5" width="28" height="6" rx="1.5" stroke={strokeFill}/>
+                  <rect id="stack3" x="0.5" y="9.5" width="28" height="6" rx="1.5" stroke={strokeFill}/>
+                  <rect id="stack2" x="0.5" y="18.5" width="28" height="6" rx="1.5" stroke={strokeFill}/>
                   <rect className="animate-pulse duration-4000 fill-primary stroke-primary" id="stack1" x="0.5" y="27.5" width="28" height="6" rx="1.5"/>
                 </g>
             </svg>
@@ -42,7 +46,11 @@ export const Stack1 = () => {
   );
 }
 
-export const Stack2 = () => {
+export const Stack2 = (props) => {
+  let strokeFill = "#D0E7D2";
+  if(props.selectedTheme == "dark"){
+    strokeFill = "white";
+  }
   return (
     <div className="hover:opacity-75">
       <TooltipProvider>
@@ -50,8 +58,8 @@ export const Stack2 = () => {
           <TooltipTrigger asChild>
             <svg width="29" height="34" viewBox="0 0 29 34" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g id="stackGroup">
-                  <rect id="stack4" x="0.5" y="0.5" width="28" height="6" rx="1.5" stroke="white"/>
-                  <rect id="stack3" x="0.5" y="9.5" width="28" height="6" rx="1.5" stroke="white"/>
+                  <rect id="stack4" x="0.5" y="0.5" width="28" height="6" rx="1.5" stroke={strokeFill}/>
+                  <rect id="stack3" x="0.5" y="9.5" width="28" height="6" rx="1.5" stroke={strokeFill}/>
                   <rect className="animate-pulse duration-4000 fill-primary stroke-primary" id="stack2" x="0.5" y="18.5" width="28" height="6" rx="1.5"/>
                   <rect className="animate-pulse duration-4000 fill-primary stroke-primary" x="0.5" y="27.5" width="28" height="6" rx="1.5"/>
                 </g>
@@ -64,7 +72,11 @@ export const Stack2 = () => {
   );
 }
 
-export const Stack3 = () => {
+export const Stack3 = (props) => {
+  let strokeFill = "#D0E7D2";
+  if(props.selectedTheme == "dark"){
+    strokeFill = "white";
+  }
   return (
     <div className="hover:opacity-75">
       <TooltipProvider>
@@ -72,7 +84,7 @@ export const Stack3 = () => {
           <TooltipTrigger asChild>
           <svg width="29" height="34" viewBox="0 0 29 34" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g id="stackGroup">
-                <rect id="stack4" x="0.5" y="0.5" width="28" height="6" rx="1.5" stroke="white" />
+                <rect id="stack4" x="0.5" y="0.5" width="28" height="6" rx="1.5" stroke={strokeFill} />
                 <rect className="animate-pulse duration-4000 fill-primary stroke-primary" id="stack3" x="0.5" y="9.5" width="28" height="6" rx="1.5" />
                 <rect className="animate-pulse duration-4000 fill-primary stroke-primary" id="stack2" x="0.5" y="18.5" width="28" height="6" rx="1.5" />
                 <rect className="animate-pulse duration-4000 fill-primary stroke-primary" id="stack1" x="0.5" y="27.5" width="28" height="6" rx="1.5" />

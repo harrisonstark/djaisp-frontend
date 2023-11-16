@@ -121,15 +121,15 @@ function App({ id, initialMessages, className }: ChatProps) {
 
 
   return (
-    <div className="dark bg-background text-foreground h-screen overflow-y-scroll">
-      <div className='dark bg-background text-foreground'>
+    <div className={`dark ${selectedTheme === 'dark' ? 'bg-background' : 'bg-[#D0E7D2]'} h-screen overflow-y-scroll`}>
+      <div className={`dark ${selectedTheme === 'dark' ? 'bg-background' : 'bg-[#D0E7D2]'} text-foreground`}>
         <div className="flex flex-col justify-center items-center w-full">
           {/* Option A Selected */}
           {token !== '' && (selectedLayout === 'A' || windowDimensions <= 900) ?
           (
           <div className='w-full h-full'>
-            <WebPlayer key={token} token={token} />
-            <Chat messages={messages} setInput={setInput} className={""} />
+            <WebPlayer key={token} token={token} selectedTheme={selectedTheme} />
+            <Chat messages={messages} setInput={setInput} className={""} selectedTheme={selectedTheme} />
             <ChatPanel
                 id={id}
                 isLoading={isLoading}
@@ -140,6 +140,7 @@ function App({ id, initialMessages, className }: ChatProps) {
                 input={input}
                 setInput={setInput}
                 currentAppLayout={selectedLayout}
+                selectedTheme={selectedTheme}
               />
               <div className="min-[100px]:hidden md:flex mr-14 mb-[4.5rem] absolute bottom-0 right-0 h-8 w-10">
                   <SettingsButton  
@@ -156,7 +157,8 @@ function App({ id, initialMessages, className }: ChatProps) {
           {token !== '' && (selectedLayout === 'B' && windowDimensions > 900)  ?
           (
           <div className='flex flex-col w-full h-screen'>
-            <div className="z-[100] sticky inset-x-0 top-0 md:pt-28 bg-background">
+            <div className={`${selectedTheme === "dark" ? "bg-background z-[100] sticky inset-x-0 top-0 md:pt-28" :
+             "bg-[#D0E7D2] z-[100] sticky inset-x-0 top-0 md:pt-28"}`}>
               <ChatPanel
                 id={id}
                 isLoading={isLoading}
@@ -166,9 +168,10 @@ function App({ id, initialMessages, className }: ChatProps) {
                 messages={messages}
                 input={input}
                 setInput={setInput}
+                selectedTheme={selectedTheme}
               />
             </div>
-            <div className="z-[1000] min-[100px]:hidden md:flex mr-8 mt-16 absolute top-0 right-0 h-8 w-10">
+            <div className="z-[1000] min-[100px]:hidden md:flex mr-14 mt-16 absolute top-0 right-0 h-8 w-10">
                   <SettingsButton  
                     selectedLayout={selectedLayout}
                     onSelectedLayoutChange={handleSelectedLayoutChange}
@@ -177,13 +180,13 @@ function App({ id, initialMessages, className }: ChatProps) {
                   />
               </div>
             <div className="">
-              <Chat messages={messages} setInput={setInput} className={""} />
+              <Chat messages={messages} setInput={setInput} className={""} selectedTheme={selectedTheme} />
             </div>
             
             
               
-            <div className={`fixed inset-x-0 bottom-0 left-0`}>
-              <WebPlayer key={token} token={token} />
+            <div className="sticky inset-x-0 bottom-0 left-0">
+              <WebPlayer key={token} token={token} selectedTheme={selectedTheme} />
             </div>
           </div>) : (<div />)}
         </div>

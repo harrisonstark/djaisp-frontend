@@ -44,7 +44,7 @@ class LoginButton extends React.Component<{}, {loggedIn: boolean}> {
       <div>
         {this.state.loggedIn ? (
           <Button onClick={this.handleLogoutClick}
-            className="text-background font-bold w-full bg-foreground border border-background">Log out
+            className="text-background font-bold w-full bg-foreground border-2 border-background">Log out
           </Button>
         ) : (
           <Button onClick={this.handleLoginClick} 

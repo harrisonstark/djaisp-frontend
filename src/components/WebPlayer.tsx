@@ -83,6 +83,8 @@ function WebPlayback(props) {
     const [position, setPosition] = useState(0);
     const [duration, setDuration] = useState(0);
 
+    let selectedTheme = props.selectedTheme;
+
     // Callback function to receive the volume value from VolumeSlider
     const handleVolumeChange = (newVolume) => {
         if (player) {
@@ -418,7 +420,7 @@ function WebPlayback(props) {
     } else {
         return (
             <div className="z-[1000] sticky top-0 left-0 w-full" style={{scrollbarGutter: "stable"}}>
-                <header className=" bg-zinc-800 flex min-[100px]:flex-col md:flex-row min-[100px]:justify-center md:justify-between relative items-center">
+                <header className={`${selectedTheme == 'dark' ? "bg-zinc-800 text-white" : "bg-[#748E63] text-[#D0E7D2]"} flex min-[100px]:flex-col md:flex-row min-[100px]:justify-center md:justify-between relative items-center `}>
                     <div className="flex min-[100px]:justify-center md:justify-self-start min-[100px]:w-full md:w-1/5  max-h-24 text-clip items-center">
                         <div className="flex flex-row px-2 w-full max-h-24 min-[100px]:justify-center lg:justify-start"> 
                             {current_track?.album?.images[0] ? ( 
@@ -518,7 +520,7 @@ function WebPlayback(props) {
                                     </button>
                             </div>
                             <div className='items-center justify-center min-[100px]:w-4/5 sm:w-3/4 md:w-full'>
-                                <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position}/>
+                                <PositionSlider selectedTheme={selectedTheme} onPositionChange={handlePositionChange} duration={duration} position={position}/>
                             </div>
                         </div>
                     </div>
@@ -528,16 +530,16 @@ function WebPlayback(props) {
                                 {/* {isRecommending() ? (isLastSong() ? <BsHourglassBottom color="#22C55E" size={24}/> : (isFirstSong() ? <BsHourglassTop size={24}/> : <BsHourglassSplit size={24}/>)) : <BsHourglass size={24}/> } */}
                                 {/* New visuals for seed/batch progress */}
                                 {isRecommending() ?
-                                 (isLastSong() ? <Stack1 /> : (
+                                 (isLastSong() ? <Stack1 selectedTheme={selectedTheme} /> : (
                                     isFirstSong() ? <Stack4 /> : (
-                                        isOverHalfway() ? <Stack2 /> : (
-                                            <Stack3 />
+                                        isOverHalfway() ? <Stack2 selectedTheme={selectedTheme}/> : (
+                                            <Stack3 selectedTheme={selectedTheme}/>
                                         )
                                     )
                                    )
                                    ) : <Stack0 />}
                                 <div className="flex flex-col w-full pl-3 justify-center">
-                                    <VolumeSlider onVolumeChange={handleVolumeChange} />
+                                    <VolumeSlider onVolumeChange={handleVolumeChange} selectedTheme={selectedTheme} />
                                 </div>
                                 <div className="pl-3 pt-1 self-center hover:opacity-50">
                                     <Dialog>

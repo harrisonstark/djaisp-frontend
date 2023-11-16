@@ -8,10 +8,11 @@ import { BiSolidUserCircle, BiMusic } from 'react-icons/bi'
 
 
 export interface ChatMessageProps {
-  message: Message
+  message: Message,
+  selectedTheme: string
 }
 
-export function ChatMessage({ message, ...props }: ChatMessageProps) {
+export function ChatMessage({ message, selectedTheme, ...props }: ChatMessageProps) {
   return (
     <div
       className={cn('group relative flex items-start')}
@@ -22,15 +23,18 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
           'flex h-8 w-8 items-center justify-center',
           message.role === 'user'
             ? 'bg-background'
-            : 'bg-primary text-primary-foreground border-2 rounded-lg'
+            : 'text-primary-foreground border-2 rounded-lg',
+            selectedTheme == 'dark'
+            ? 'dark border-background bg-primary'
+            : 'light border-background bg-[#748E63]',
         )}
       >
         {message.role === 'user' ? Cookies.get('profilePicture') !== "" ?
-         <div className="flex w-full h-full items-center justify-center  bg-background">
-           <img className="w-full h-full rounded-lg border-2" src={Cookies.get("profilePicture")}>
+         <div className={`flex w-full h-full items-center justify-center ${selectedTheme == 'dark' ? "dark bg-background" : "light bg-[#D0E7D2]"}`}>
+           <img className={`${selectedTheme == 'dark' ? "dark border-foreground" : "light border-background"} w-full h-full rounded-lg border-2`} src={Cookies.get("profilePicture")}>
         </img></div> : <BiSolidUserCircle /> : <BiMusic />}
       </div>
-      <div className="w-full flex-1 px-1 ml-4 space-y-2 overflow-hidden">
+      <div className={`${selectedTheme == 'dark' ? "dark text-foreground" : "light text-[#22311d]"} w-full flex-1 px-1 ml-4 space-y-2 overflow-hidden`}>
         {/* WE DONT NEED MARKDOWN RESPONSES!!!!!!!!!! */}
         {/* <MemoizedReactMarkdown
           className="prose break-words dark:prose-invert prose-p:leading-relaxed prose-pre:p-0"

@@ -8,14 +8,16 @@ import { useEnterSubmit } from '../../lib/hooks/use-enter-submit'
 
 export interface PromptProps extends Pick<UseChatHelpers, 'input' | 'setInput'> {
   onSubmit: (value: string) => Promise<void>
-  isLoading: boolean
+  isLoading: boolean,
+  selectedTheme: string,
 }
 
 export function PromptForm({
   onSubmit,
   input,
   setInput,
-  isLoading
+  isLoading,
+  selectedTheme
 }: PromptProps) {
   const { formRef, onKeyDown } = useEnterSubmit()
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
@@ -56,7 +58,9 @@ export function PromptForm({
       }}
       ref={formRef}
     >
-      <div className="flex justify-between gap-2 items-center max-h-60 w-full flex-row bg-background px-2 sm:rounded-md sm:border sm:px-2">
+      <div className={`${selectedTheme === 'dark' ? "dark bg-background text-foreground sm:border-foreground" : 
+      "light bg-[#748E63] text-[#D0E7D2] sm:border-background"} flex justify-between gap-2 items-center max-h-60 w-full flex-row  px-2 sm:rounded-md sm:border sm:px-2
+      `}>
         <div className="w-full flex justify-center items-center">
           <Textarea
             ref={inputRef}
@@ -67,7 +71,8 @@ export function PromptForm({
             onChange={handleChange}
             placeholder="Type your message..."
             spellCheck={false}
-            className="min-h-[60px] w-full h-full resize-none bg-transparent px-4 py-[1.3rem] focus-within:outline-none sm:text-sm"
+            className={`min-h-[60px] w-full h-full resize-none bg-transparent px-4 py-[1.3rem] focus-within:outline-none sm:text-md
+                        ${selectedTheme === 'dark' ? "placeholder:text-white" : "placeholder:text-[#D0E7D2]"}`}
           />
         </div>
         <div>
@@ -84,7 +89,7 @@ export function PromptForm({
                   <span className="sr-only">Send message</span>
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Send message</TooltipContent>
+              <TooltipContent className={`${selectedTheme == 'dark' ? "dark bg-background text-foreground" : "light bg-[#D0E7D2] text-background"}`}>Send message</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>

@@ -21,7 +21,7 @@ import { useEffect } from "react"
 //   id?: string
 // }
 
-export function Chat({messages, setInput, className}) {
+export function Chat({messages, setInput, className, selectedTheme}) {
 //   const { toast } = useToast()
 //   const [previewToken] = useLocalStorage<string | null>(
 //     'ai-token',
@@ -66,17 +66,17 @@ export function Chat({messages, setInput, className}) {
 //   }
 
   return (
-    <div className="flex justify-center items-center">
+    <div className={`flex justify-center items-center ${selectedTheme == 'dark' ? "dark bg-background" : "light bg-[#D0E7D2]"} `}>
       <div className={cn('min-[100px]:w-full md:w-3/4 lg:w-1/2 pb-[200px] sm:pt-4 md:pt-10', className)}>
         {messages.length ? (
           <div className="mx-auto">
             <div className="z-1 flex justify-center items-center align-center">
-              <ChatList messages={messages} />
+              <ChatList messages={messages} selectedTheme={selectedTheme} />
               {/* <ChatScrollAnchor trackVisibility={isLoading} /> */}
             </div>
           </div>
         ) : (
-          <EmptyScreen setInput={setInput} />
+          <EmptyScreen setInput={setInput} selectedTheme={selectedTheme} />
         )}
         {/* <ChatPanel
           id={id}

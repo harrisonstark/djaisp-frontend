@@ -5,6 +5,7 @@ import {
     SheetContent,
     SheetDescription,
     SheetHeader,
+    SheetOverlay,
     SheetTitle,
     SheetTrigger,
   } from "../components/ui/sheet"
@@ -24,24 +25,32 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
 
     return(
         <div className="z-[100] w-full h-full flex justify-center items-center">
-            <Sheet >
+            <Sheet>
                 <SheetTrigger>
-                    <Button variant="outline" className="hover:bg-zinc-900 w-full h-full opacity-70 hover:opacity-100 border-2 border-primary p-4">
-                        <BsFillGearFill fill="white" size={32}/>
+                    <Button variant="outline" 
+                    className={`w-full h-full  p-4
+                                ${selectedTheme === 'dark' ? 'hover:bg-zinc-900 opacity-70 hover:opacity-100 border-2 border-primary'
+                                 : 'bg-[#D0E7D2] hover:bg-[#79AC78] opacity-70 hover:opacity-100 border-2 border-black'}`}>
+                        <BsFillGearFill fill={`${selectedTheme === 'dark' ? 'white' : 'black'}`} size={32}/>
                     </Button>
                 </SheetTrigger>
-                <SheetContent className="z-[1000]">
+                <SheetContent className={`${selectedTheme === 'dark' ? 'light bg-foreground' : 'bg-[#D0E7D2]'}
+                       z-[1000]`}>
                     <SheetHeader>
-                    <SheetTitle>M<em>AI</em>STRO Settings</SheetTitle>
+                    <SheetTitle className={`${selectedTheme === 'dark' ? 'light' : 'dark'}
+                        text-background`}>
+                            MAISTRO Settings
+                    </SheetTitle>
                     <SheetDescription>
-                        Modify the look and feel of M<em>AI</em>STRO here.
+                        Modify the look and feel of MAISTRO here.
                     </SheetDescription>
                     </SheetHeader>
                     <div className="relative h-full">
-                        <h1 className="text-background text-medium font-bold pt-10 pb-4">Change App Layout</h1>
+                        <h1 className={`${selectedTheme === 'dark' ? 'light' : 'dark'}
+                        text-background text-medium font-bold pt-10 pb-4`}>Change App Layout</h1>
                         <div className="grid grid-cols-2 grid-row-1 gap-4 text-background">
-                            <div className={`border rounded-lg h-20 hover:-translate-y-1 duration-200
-                                ${selectedLayout === 'A' ? 'border border-primary' : ''}`}
+                            <div className={`border-2 border-background rounded-lg h-20 hover:-translate-y-1 duration-200
+                                ${selectedLayout === 'A' ? 'border-2 border-primary' : ''}`}
                                 onClick={() => handleLayoutClick('A')}
                             >
                                 <TooltipProvider>
@@ -56,8 +65,8 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
                                     </Tooltip>
                                 </TooltipProvider>
                             </div>
-                            <div className={`border rounded-lg h-20 hover:-translate-y-1 duration-200
-                                ${selectedLayout === 'B' ? 'border border-primary' : ''}`}
+                            <div className={`border-2 border-background rounded-lg h-20 hover:-translate-y-1 duration-200
+                                ${selectedLayout === 'B' ? 'border-2 border-primary' : ''}`}
                                 onClick={() => handleLayoutClick('B')}
                             >
                                 <TooltipProvider>
@@ -74,16 +83,19 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
                             </div>
                         </div>
 
-                        <h1 className="text-background text-medium font-bold pt-10 pb-4">Change App Theme</h1>
-                        <div className="grid grid-cols-2 grid-row-1 gap-4 text-background">
-                            <div className={`border rounded-lg hover:-translate-y-1 duration-200 text-background h-8 flex justify-center items-center
-                                    ${selectedTheme === 'dark' ? 'border-primary' : ''}`}
+                        <h1 className={`${selectedTheme === 'dark' ? 'light' : 'dark'}
+                        text-background text-medium font-bold pt-10 pb-4`}>
+                            Change App Theme
+                        </h1>
+                        <div className="grid grid-cols-2 grid-row-1 gap-4">
+                            <div className={`border-2 border-background bg-black  rounded-lg hover:-translate-y-1 duration-200 h-8 flex justify-center items-center
+                                    ${selectedTheme === 'dark' ? 'border-primary text-background' : 'text-white'}`}
                                     onClick={() => handleThemeChange('dark')}
                             >
                                 Dark
                             </div>
-                            <div className={`rounded-lg bg-slate-200 hover:-translate-y-1 duration-200 text-foreground h-8 flex justify-center items-center
-                                    ${selectedTheme === 'light' ? 'border-2 border-primary' : ''}`}
+                            <div className={` rounded-lg bg-[#79AC78] hover:-translate-y-1 duration-200  h-8 flex justify-center items-center
+                                    ${selectedTheme === 'light' ? 'border-2 border-primary text-black' : 'text-foreground border-2 border-white'}`}
                                     onClick={() => handleThemeChange('light')}
                             >
                                 Light
@@ -93,9 +105,9 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
                             {Cookies.get('profilePicture') !== "" ?
                                 <div className="flex flex-row justify-start items-center mb-4">
                                     <div className="w-12 h-10">
-                                        <img className="w-full h-full border-2 rounded-lg" src={Cookies.get("profilePicture")}></img>
+                                        <img className={`${selectedTheme === "dark" ? 'border-white' : 'border-black'} w-full h-full border-2 rounded-lg`} src={Cookies.get("profilePicture")}></img>
                                     </div>
-                                    <div className="text-background pl-4">
+                                    <div className={`${selectedTheme === "dark" ? 'text-white' : 'text-black'} pl-4`}>
                                         {Cookies.get('user_id')}
                                     </div>
                                 </div>

@@ -6,9 +6,10 @@ interface SongPositionSliderProps {
   onPositionChange: (newPosition: number) => void;
   duration: number; // Total duration of the song (in seconds)
   position: number;
+  selectedTheme: string;
 }
 
-function SongPositionSlider({ onPositionChange, duration, position }: SongPositionSliderProps) {
+function SongPositionSlider({ selectedTheme, onPositionChange, duration, position }: SongPositionSliderProps) {
 
   // Handle position change
   const handlePositionChange = (values: number[]) => {
@@ -25,7 +26,7 @@ function SongPositionSlider({ onPositionChange, duration, position }: SongPositi
     <div className="flex flex-row items-center" style={{ minWidth: '200px' }}>
       <div className='pb-1'>{formatTime(position)}</div>
       <div className="w-full px-4">
-        <Slider defaultValue={[position]} value={[position]} min={0} max={duration} step={Math.floor(duration / 1000)} onValueChange={handlePositionChange}/>
+        <Slider selectedTheme={selectedTheme} defaultValue={[position]} value={[position]} min={0} max={duration} step={Math.floor(duration / 1000)} onValueChange={handlePositionChange}/>
       </div>
       <div className='pb-1'>{formatTime(duration)}</div>
     </div>
