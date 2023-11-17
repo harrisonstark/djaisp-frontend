@@ -1,5 +1,4 @@
 import * as React from "react"
-import { UseChatHelpers } from 'ai/react'
 
 import { Button } from '../ui/button'
 import { BsArrowRight, BsInfoCircle } from 'react-icons/bs'
@@ -22,8 +21,8 @@ const exampleMessages = [
 export function EmptyScreen({ setInput, selectedTheme }) {
   return (
     <div className="mx-auto w-full">
-      <div className={`rounded-lg p-8 text-[#22311d]
-                ${selectedTheme === 'dark' ? 'bg-background border' : 'bg-[#D0E7D2] border border-[#22311d]'}`}>
+      <div className={`rounded-lg p-8
+                ${selectedTheme === 'dark' ? 'bg-background border text-white' : 'text-[#22311d] bg-[#D0E7D2] border border-[#22311d]'}`}>
         <h1 className="mb-2 text-lg font-semibold">
           Welcome to <b>MAISTRO</b> <span className={`${selectedTheme === 'dark' ? "text-muted-foreground" : "text-[#3f5a36]"}`}>(my · strow)</span>
         </h1>
@@ -34,15 +33,16 @@ export function EmptyScreen({ setInput, selectedTheme }) {
         <p className={`leading-normal ${selectedTheme === 'dark' ? "text-muted-foreground" : "text-[#3f5a36]"}`}>
           Start a conversation with <b>MAISTRO</b> here or try the following examples:
         </p>
-        <div className="mt-4 flex flex-col items-start space-y-2">
+        <div className={`mt-4 flex flex-col items-start space-y-2
+              ${selectedTheme === 'dark' ? "text-primary" : "text-[#22311d]"}`}>
           {exampleMessages.map((message, index) => (
             <Button
               key={index}
               variant="link"
-              className="h-auto p-0 text-md text-bold text-[#304529]"
+              className="h-auto p-0 text-md text-bold"
               onClick={() => setInput(message.message)}
             >
-              <BsArrowRight className={`mr-2 ${selectedTheme === 'dark' ? "text-muted-foreground" : "text-[#3f5a36]"}`} />
+              <BsArrowRight className="mr-2" />
               {message.heading}
             </Button>
           ))}

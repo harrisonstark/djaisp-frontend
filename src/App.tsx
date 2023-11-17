@@ -157,8 +157,8 @@ function App({ id, initialMessages, className }: ChatProps) {
           {token !== '' && (selectedLayout === 'B' && windowDimensions > 900)  ?
           (
           <div className='flex flex-col w-full h-screen'>
-            <div className={`${selectedTheme === "dark" ? "bg-background z-[100] sticky inset-x-0 top-0 md:pt-28" :
-             "bg-[#D0E7D2] z-[100] sticky inset-x-0 top-0 md:pt-28"}`}>
+            <div className={`${selectedTheme === "dark" ? "bg-background z-[100] sticky inset-x-0 top-0 md:pt-28 h-full" :
+             "bg-[#D0E7D2] z-[100] sticky inset-x-0 top-0 md:pt-28 h-full"}`}>
               <ChatPanel
                 id={id}
                 isLoading={isLoading}

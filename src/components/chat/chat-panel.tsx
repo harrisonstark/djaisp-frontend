@@ -36,7 +36,7 @@ export function ChatPanel({
     <div className="z-[1000] flex justify-center fixed inset-x-0 absolute bottom-0 min-[100px]:max-w-full  sm:max-w-2xl mx-auto">
       {/* <ButtonScrollToBottom /> */}
       <div className={`w-full ${selectedTheme == 'dark' ? "dark bg-background" : "light bg-[#D0E7D2]"}
-       ${currentAppLayout == "A" ? "-ml-4 bg-background" : ""}`}>
+       ${currentAppLayout == "A" ? "-ml-4" : ""}`}>
         <div className="flex  items-center justify-center">
           {isLoading ? (
             <Button
@@ -50,7 +50,7 @@ export function ChatPanel({
           ) : ((<></>))}
         </div>
         <div className={`${selectedTheme == 'dark' ? "dark bg-background" : "light bg-[#D0E7D2]"} h-max`}>
-        <div className={`bg-background ${currentAppLayout == "A" ? "mb-14 " : ""} space-y-4 border-t shadow-lg sm:rounded-xl sm:border-0`}>
+        <div className={`${currentAppLayout == "A" ? "mb-14 " : ""} space-y-4 border-t shadow-lg sm:rounded-xl sm:border-0`}>
             <PromptForm
                 onSubmit={async value => {
                 await append({

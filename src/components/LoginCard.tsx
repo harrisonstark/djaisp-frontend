@@ -23,7 +23,7 @@ export default function CardDemo() {
                 <CardDescription>Get Started with DJ AI by Connecting to Spotify</CardDescription>
             </CardHeader>
             <CardContent>
-                <LoginButton />
+                <LoginButton selectedTheme="black" />
             </CardContent>
             </Card> 
       </div> 

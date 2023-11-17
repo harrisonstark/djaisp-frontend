@@ -8,7 +8,7 @@ import {BsSpotify} from 'react-icons/bs'
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
 const REDIRECT_URI = 'http://localhost:9090/redirect';
 
-class LoginButton extends React.Component<{}, {loggedIn: boolean}> {
+class LoginButton extends React.Component<{selectedTheme: string}, {loggedIn: boolean}> {
   constructor(props) {
     super(props);
 
@@ -44,7 +44,9 @@ class LoginButton extends React.Component<{}, {loggedIn: boolean}> {
       <div>
         {this.state.loggedIn ? (
           <Button onClick={this.handleLogoutClick}
-            className="text-background font-bold w-full bg-foreground border-2 border-background">Log out
+            className={` font-bold w-full  border-2
+                        ${this.props.selectedTheme === 'dark' ? "bg-foreground text-background border-background" :
+                        "border-[#22311d] bg-[#79AC78] text-[#22311d]"}`}>Log out
           </Button>
         ) : (
           <Button onClick={this.handleLoginClick} 

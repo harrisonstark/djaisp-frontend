@@ -8,11 +8,12 @@ import {
     SheetOverlay,
     SheetTitle,
     SheetTrigger,
-  } from "../components/ui/sheet"
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '../components/ui/tooltip'
-import {Button} from '../components/ui/button'
-import {BsFillGearFill} from 'react-icons/bs'
-import LoginButton from "./SpotifyButton"
+  } from "../components/ui/sheet";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '../components/ui/tooltip';
+import {Button} from '../components/ui/button';
+import {BsFillGearFill} from 'react-icons/bs';
+import LoginButton from "./SpotifyButton";
+import { LightLayoutA, LightLayoutB, DarkLayoutA, DarkLayoutB } from "./ui/layouts";
 
 export default function SettingsButton({ selectedLayout, onSelectedLayoutChange, selectedTheme, onSelectedThemeChange }) {
     const handleLayoutClick = (layout) => {
@@ -50,31 +51,31 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
                         text-background text-medium font-bold pt-10 pb-4`}>Change App Layout</h1>
                         <div className="grid grid-cols-2 grid-row-1 gap-4 text-background">
                             <div className={`border-2 border-background rounded-lg h-20 hover:-translate-y-1 duration-200
-                                ${selectedLayout === 'A' ? 'border-2 border-primary' : ''}`}
+                                ${selectedLayout === 'A' ? 'border-primary' : 
+                                (selectedTheme == 'dark' ? 'border-background' : 'border-foreground')}`}
                                 onClick={() => handleLayoutClick('A')}
                             >
                                 <TooltipProvider>
                                     <Tooltip>
                                     <TooltipTrigger asChild>
-                                        {/* INSERT LAYOUT A PREVIEW IMAGE HERE */}
                                        <div className="w-full h-full flex justify-center items-center">
-                                        A
+                                        {selectedTheme == 'dark' ? <DarkLayoutA /> : <LightLayoutA />}
                                        </div>
                                     </TooltipTrigger>
                                     <TooltipContent>Media Player on Top</TooltipContent>
                                     </Tooltip>
                                 </TooltipProvider>
                             </div>
-                            <div className={`border-2 border-background rounded-lg h-20 hover:-translate-y-1 duration-200
-                                ${selectedLayout === 'B' ? 'border-2 border-primary' : ''}`}
+                            <div className={`border-2 rounded-lg h-20 hover:-translate-y-1 duration-200
+                                ${selectedLayout === 'B' ? 'border-primary' : 
+                                    (selectedTheme == 'dark' ? 'border-background' : 'border-foreground')}`}
                                 onClick={() => handleLayoutClick('B')}
                             >
                                 <TooltipProvider>
                                     <Tooltip>
                                     <TooltipTrigger asChild>
-                                        {/* INSERT LAYOUT B PREVIEW IMAGE HERE */}
                                        <div className="w-full h-full flex justify-center items-center">
-                                        B
+                                        {selectedTheme == 'dark' ? <DarkLayoutB /> : <LightLayoutB />}
                                        </div>
                                     </TooltipTrigger>
                                     <TooltipContent>Media Player on Bottom</TooltipContent>
@@ -112,7 +113,7 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
                                     </div>
                                 </div>
                             : <div />}
-                            <LoginButton />
+                            <LoginButton selectedTheme={selectedTheme} />
                         </div>
                     </div>
                     
