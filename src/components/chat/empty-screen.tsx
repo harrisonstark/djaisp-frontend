@@ -47,10 +47,13 @@ export function EmptyScreen({ setInput, selectedTheme }) {
             </Button>
           ))}
         </div>
-        <span className={`mt-4 flex items-center 
-                ${selectedTheme === 'dark' ? "text-muted-foreground" : "text-[#3f5a36]"}`}>
-              Click the <BsInfoCircle className="mx-2"  size={20}/> icon next to the volume slider for more info on how MAISTRO works.
+        <div className={`sm:flex sm:items-center mt-2 ${selectedTheme === 'dark' ? "text-muted-foreground" : "text-[#3f5a36]"}`}>
+        <span>Click the</span>
+        <span className="inline-flex items-baseline ">
+              <BsInfoCircle className="mx-2 sm:mt-1 w-5 h-5"  />
         </span>
+        <span>icon next to the volume slider for more info on how MAISTRO works.</span>
+        </div>
         
       </div>
     </div>

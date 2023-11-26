@@ -11,10 +11,6 @@ import {BsPlayCircleFill,
         BsHandThumbsUpFill,
         BsHandThumbsDown,
         BsHandThumbsDownFill,
-        BsHourglass,
-        BsHourglassTop,
-        BsHourglassSplit,
-        BsHourglassBottom,
         BsInfoCircle} 
 from 'react-icons/bs'
 
@@ -23,9 +19,6 @@ import {Stack0, Stack1, Stack2, Stack3, Stack4} from '../components/ui/stacks'
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
     DialogTrigger,
   } from "../components/ui/dialog"
 
@@ -420,12 +413,12 @@ function WebPlayback(props) {
     } else {
         return (
             <div className="z-[1000] sticky top-0 left-0 w-full" style={{scrollbarGutter: "stable"}}>
-                <header className={`${selectedTheme == 'dark' ? "bg-zinc-800 text-white" : "bg-[#748E63] text-[#D0E7D2]"} flex min-[100px]:flex-col md:flex-row min-[100px]:justify-center md:justify-between relative items-center `}>
+                <header className={`${selectedTheme === 'dark' ? "bg-zinc-800 text-white" : "bg-[#748E63] text-[#D0E7D2]"} flex min-[100px]:flex-col md:flex-row min-[100px]:justify-center md:justify-between relative items-center `}>
                     <div className="flex min-[100px]:justify-center md:justify-self-start min-[100px]:w-full sm:w-2/3 md:w-1/5  max-h-24 text-clip items-center">
                         <div className="flex flex-row px-2 w-full max-h-24 min-[100px]:justify-center lg:justify-start"> 
                             {current_track?.album?.images[0] ? ( 
                                 <div className="p-2 w-20 h-20 flex-shrink-0">
-                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.album.uri)} target="_blank">
+                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.album.uri)} target="_blank" rel="noreferrer">
                                     <img
                                         src={current_track.album.images[0].url}
                                         className="aspect-1  rounded-lg hover:opacity-70 transition-opacity duration-100"
@@ -442,28 +435,28 @@ function WebPlayback(props) {
                                         {current_track.name.length > 25 ? (
                                             <div className="relative flex overflow-x-hidden">
                                                 <div className="animate-marquee whitespace-nowrap">
-                                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank">
+                                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank" rel="noreferrer">
                                                         <span className="hover:underline mx-4">
                                                         {current_track.name}
                                                         </span>
                                                     </a>
                                                 </div>
                                                 <div className="animate-marquee whitespace-nowrap">
-                                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank">
+                                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank" rel="noreferrer">
                                                         <p className="hover:underline mx-4">
                                                         {current_track.name}
                                                         </p>
                                                     </a>
                                                 </div>
                                                 <div className="animate-marquee2 whitespace-nowrap">
-                                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank">
+                                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank" rel="noreferrer">
                                                         <span className="hover:underline">
                                                         {current_track.name}
                                                         </span>
                                                     </a>
                                                 </div>
                                                 <div className="animate-marquee2 whitespace-nowrap">
-                                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank">
+                                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank" rel="noreferrer">
                                                         <span className="hover:underline">
                                                         {current_track.name}
                                                         </span>
@@ -473,7 +466,7 @@ function WebPlayback(props) {
                                         ) :
                                         (
                                             <div>
-                                            <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank">
+                                            <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank" rel="noreferrer">
                                                 <span className="hover:underline">
                                                 {current_track.name}
                                                 </span>
@@ -544,13 +537,63 @@ function WebPlayback(props) {
                                 <div className="pl-3 pt-1 self-center hover:opacity-50">
                                     <Dialog>
                                         <DialogTrigger><BsInfoCircle size={18} /></DialogTrigger>
-                                        <DialogContent>
-                                        <DialogHeader>
-                                            <DialogTitle>MAISTRO Info</DialogTitle>
-                                            <DialogDescription>
-                                            TODO: Add info on how MAISTRO works
-                                            </DialogDescription>
-                                        </DialogHeader>
+                                        <DialogContent className={`${selectedTheme === 'dark' ? 'bg-background text-foreground' : 'bg-[#748E63] text-[#D0E7D2]'} z-[1000] max-h-screen overflow-y-auto`}>
+                                            <h1 className="text-foreground text-lg font-semibold">Using MAISTRO</h1>
+                                            <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} text-sm`}>
+                                            MAISTRO works by using your messages as a basis for generating batches of songs. Depending on how much you enjoy the current
+                                                set of songs being recommended will effect future batches. Below we explain how to use and interact with MAISTRO.
+                                            </p>
+                                            <h1 className="text-md font-semibold">How to Start MAISTRO</h1>
+                                            <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} text-sm`}>
+                                                To begin using MAISTRO, send a message to it using the text input box. This can be anything, whether it's your current mood or
+                                                you need help doing a certain activity, MAISTRO will try its best to provide the best music for the occasion. Once you are ready
+                                                to send your message, click ENTER or use the green send button to relay your message to MAISTRO.
+                                            </p>
+                                            <h1 className="text-md font-semibold">What is a Batch?</h1>
+                                            <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} text-sm`}>
+                                                A <b>batch</b> is a set of <b>6 to 12</b> songs recommended to you by MAISTRO. The first batch gets created once you send a message to MAISTRO 
+                                                and gets reset everytime you send a new message. To view how far along you are in the current batch, look at the icon to the left of the 
+                                                volume slider, which can be one of the following:
+                                            </p>
+                                            <div className="flex flex-row justify-between items-center">
+                                                <div className="flex flex-col items-center">
+                                                    <Stack0 />
+                                                    <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} mt-2 text-center text-sm`}>
+                                                        MAISTRO is <br /> Not Active
+                                                    </p>
+                                                </div>
+                                                <div className="flex flex-col items-center">
+                                                    <Stack4 />
+                                                    <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} mt-2 text-center text-sm`}>
+                                                        First Song <br /> in Batch
+                                                    </p>
+                                                </div>
+                                                <div className="flex flex-col items-center">
+                                                    <Stack3 />
+                                                    <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} mt-2 text-center text-sm`}>
+                                                        First Half <br /> of Batch
+                                                    </p>
+                                                </div>
+                                                <div className="flex flex-col items-center">
+                                                    <Stack2 />
+                                                    <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} mt-2 text-center text-sm`}>
+                                                        Second Half <br /> of Batch
+                                                    </p>
+                                                </div>
+                                                <div className="flex flex-col items-center">
+                                                    <Stack1 />
+                                                    <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} mt-2 text-center text-sm`}>
+                                                        Last Song <br /> in Batch
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <h1 className="text-md font-semibold">How do Batches Change over Time?</h1>
+                                            <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} text-sm`}>
+                                            Once MAISTRO is active, there are <b>two factors</b> that determine how songs in 
+                                            future batches are generated. <b>1)</b> How long did you listen to a song (this includes skipping a song) and <b>2)</b> Whether you 
+                                            liked a song by using the thumbs up (👍) and thumbs down (👎) buttons. Using the thumbs up/down buttons have a much greater effect 
+                                            on song recommendations compared to the time listened, so if you really like/dislike a song be sure to use those buttons!.              
+                                            </p>
                                         </DialogContent>
                                     </Dialog>   
                                 </div>

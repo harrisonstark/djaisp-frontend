@@ -20,7 +20,7 @@ export default function CardDemo() {
             </div>
             <CardHeader>
                 <CardTitle>Change the way you listen to music</CardTitle>
-                <CardDescription>Get Started with DJ AI by Connecting to Spotify</CardDescription>
+                <CardDescription>Get Started with MAISTRO by Connecting to Spotify</CardDescription>
             </CardHeader>
             <CardContent>
                 <LoginButton selectedTheme="black" />

@@ -1,11 +1,10 @@
-import React, { useState } from "react"
+import React from "react"
 import Cookies from 'js-cookie';
 import {
     Sheet,
     SheetContent,
     SheetDescription,
     SheetHeader,
-    SheetOverlay,
     SheetTitle,
     SheetTrigger,
   } from "../components/ui/sheet";
@@ -32,7 +31,10 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
                     className={`w-full h-full  p-4
                                 ${selectedTheme === 'dark' ? 'hover:bg-zinc-900 opacity-70 hover:opacity-100 border-2 border-primary'
                                  : 'bg-[#D0E7D2] hover:bg-[#79AC78] opacity-70 hover:opacity-100 border-2 border-black'}`}>
-                        <BsFillGearFill fill={`${selectedTheme === 'dark' ? 'white' : 'black'}`} size={32}/>
+                        <BsFillGearFill 
+                            fill={`${selectedTheme === 'dark' ? 'white' : 'black'}`}
+                            size={32}
+                        />
                     </Button>
                 </SheetTrigger>
                 <SheetContent className={`${selectedTheme === 'dark' ? 'light bg-foreground' : 'bg-[#D0E7D2]'}
@@ -52,14 +54,14 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
                         <div className="grid grid-cols-2 grid-row-1 gap-4 text-background">
                             <div className={`border-2 border-background rounded-lg h-20 hover:-translate-y-1 duration-200
                                 ${selectedLayout === 'A' ? 'border-primary' : 
-                                (selectedTheme == 'dark' ? 'border-background' : 'border-foreground')}`}
+                                (selectedTheme === 'dark' ? 'border-background' : 'border-foreground')}`}
                                 onClick={() => handleLayoutClick('A')}
                             >
                                 <TooltipProvider>
                                     <Tooltip>
                                     <TooltipTrigger asChild>
                                        <div className="w-full h-full flex justify-center items-center">
-                                        {selectedTheme == 'dark' ? <DarkLayoutA /> : <LightLayoutA />}
+                                        {selectedTheme === 'dark' ? <DarkLayoutA /> : <LightLayoutA />}
                                        </div>
                                     </TooltipTrigger>
                                     <TooltipContent>Media Player on Top</TooltipContent>
@@ -68,14 +70,14 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
                             </div>
                             <div className={`border-2 rounded-lg h-20 hover:-translate-y-1 duration-200
                                 ${selectedLayout === 'B' ? 'border-primary' : 
-                                    (selectedTheme == 'dark' ? 'border-background' : 'border-foreground')}`}
+                                    (selectedTheme === 'dark' ? 'border-background' : 'border-foreground')}`}
                                 onClick={() => handleLayoutClick('B')}
                             >
                                 <TooltipProvider>
                                     <Tooltip>
                                     <TooltipTrigger asChild>
                                        <div className="w-full h-full flex justify-center items-center">
-                                        {selectedTheme == 'dark' ? <DarkLayoutB /> : <LightLayoutB />}
+                                        {selectedTheme === 'dark' ? <DarkLayoutB /> : <LightLayoutB />}
                                        </div>
                                     </TooltipTrigger>
                                     <TooltipContent>Media Player on Bottom</TooltipContent>
@@ -106,7 +108,12 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
                             {Cookies.get('profilePicture') !== "" ?
                                 <div className="flex flex-row justify-start items-center mb-4">
                                     <div className="w-12 h-10">
-                                        <img className={`${selectedTheme === "dark" ? 'border-white' : 'border-black'} w-full h-full border-2 rounded-lg`} src={Cookies.get("profilePicture")}></img>
+                                        <img 
+                                            className={`${selectedTheme === "dark" ? 'border-white' : 'border-black'}
+                                            w-full h-full border-2 rounded-lg`}
+                                            src={Cookies.get("profilePicture")}
+                                            alt="profile"
+                                         />
                                     </div>
                                     <div className={`${selectedTheme === "dark" ? 'text-white' : 'text-black'} pl-4`}>
                                         {Cookies.get('user_id')}
