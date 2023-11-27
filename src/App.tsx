@@ -131,7 +131,7 @@ function App({ id, initialMessages, className }: ChatProps) {
           (
           <div className='w-full h-full'>
             <WebPlayer key={token} token={token} selectedTheme={selectedTheme} />
-            <Chat messages={messages} setInput={setInput} className={""} selectedTheme={selectedTheme} />
+            <Chat messages={messages} setInput={setInput} className={""} selectedTheme={selectedTheme} selectedLayout={selectedLayout} />
             <ChatPanel
                 id={id}
                 isLoading={isLoading}
@@ -182,7 +182,7 @@ function App({ id, initialMessages, className }: ChatProps) {
                   />
               </div>
             <div className="">
-              <Chat messages={messages} setInput={setInput} className={""} selectedTheme={selectedTheme} />
+              <Chat messages={messages} setInput={setInput} className={""} selectedTheme={selectedTheme} selectedLayout={selectedLayout} />
             </div>
             
             
