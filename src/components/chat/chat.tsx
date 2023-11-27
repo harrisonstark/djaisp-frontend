@@ -21,7 +21,7 @@ import { useEffect } from "react"
 //   id?: string
 // }
 
-export function Chat({messages, setInput, className, selectedTheme}) {
+export function Chat({messages, setInput, className, selectedTheme, selectedLayout}) {
 //   const { toast } = useToast()
 //   const [previewToken] = useLocalStorage<string | null>(
 //     'ai-token',
@@ -71,7 +71,7 @@ export function Chat({messages, setInput, className, selectedTheme}) {
         {messages.length ? (
           <div className="mx-auto">
             <div className="z-1 flex justify-center items-center align-center">
-              <ChatList messages={messages} selectedTheme={selectedTheme} />
+              <ChatList messages={messages} selectedTheme={selectedTheme} selectedLayout={selectedLayout} />
               {/* <ChatScrollAnchor trackVisibility={isLoading} /> */}
             </div>
           </div>
