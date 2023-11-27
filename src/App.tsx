@@ -53,18 +53,22 @@ function App({ id, initialMessages, className }: ChatProps) {
     }
   }, []);
 
-  // Handle which layout is selected A, B, C, or D
-  const [selectedLayout, setSelectedLayout] = useState('B');
+  // Handle which layout is selected A (player at top, chat at bottom) or B (player at bottom, chat at top)
+  const layout = Cookies.get("layout");
+  const [selectedLayout, setSelectedLayout] = useState(layout ? layout : "A");
 
   const handleSelectedLayoutChange = (layout) => {
     setSelectedLayout(layout);
+    Cookies.set("layout", layout, { path: "/" });
   };
 
   // Handle which theme is selected ('dark' or 'light')
-  const [selectedTheme, setSelectedTheme] = useState('dark');
+  const theme = Cookies.get("theme");
+  const [selectedTheme, setSelectedTheme] = useState(theme ? theme : "dark");
 
   const handleSelectedThemeChange = (theme) => {
     setSelectedTheme(theme);
+    Cookies.set("theme", theme, { path: "/" });
   };
 
 
@@ -86,9 +90,7 @@ function App({ id, initialMessages, className }: ChatProps) {
     'ai-token',
     null
   )
-  // May need this later
-  // const [previewTokenDialog, setPreviewTokenDialog] = useState(IS_PREVIEW)
-  // const [previewTokenInput, setPreviewTokenInput] = useState(previewToken ?? '')
+  
   const { messages, append, reload, stop, isLoading, input, setInput } =
     useChat({
       initialMessages,

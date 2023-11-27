@@ -1,5 +1,5 @@
 import { UseChatHelpers } from 'ai/react'
-import React, {useRef} from "react"
+import React from "react"
 import Textarea from 'react-textarea-autosize'
 import { Button } from '../ui/button'
 import { GoPaperAirplane } from 'react-icons/go'
@@ -89,7 +89,7 @@ export function PromptForm({
                   <span className="sr-only">Send message</span>
                 </Button>
               </TooltipTrigger>
-              <TooltipContent className={`${selectedTheme == 'dark' ? "dark bg-background text-foreground" : "light bg-[#D0E7D2] text-background"}`}>Send message</TooltipContent>
+              <TooltipContent className={`${selectedTheme === 'dark' ? "dark bg-background text-foreground" : "light bg-[#D0E7D2] text-background"}`}>Send message</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>

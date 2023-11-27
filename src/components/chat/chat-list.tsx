@@ -15,7 +15,7 @@ export function ChatList({ messages, selectedTheme }: ChatList) {
   }
 
   return (
-    <div className={`z-1 sm:border ${selectedTheme == 'dark' ? "dark" : "light border-background"}   rounded-lg p-8  sm:max-w-2xl w-full flex flex-col justify-center px-8`}>
+    <div className={`z-1 sm:border ${selectedTheme === 'dark' ? "dark" : "light border-background"}   rounded-lg p-8  sm:max-w-2xl w-full flex flex-col justify-center px-8`}>
       {messages.map((message, index) => (
         <div key={index}>
           <ChatMessage message={message} selectedTheme={selectedTheme}/>

@@ -46,5 +46,7 @@ export function logOut() {
   Cookies.remove("userRecentMessage");
   Cookies.remove("maistroRecentMessage");
   Cookies.remove("profilePicture");
+  Cookies.remove("layout");
+  Cookies.remove("theme");
   window.location.href = "/";
 }

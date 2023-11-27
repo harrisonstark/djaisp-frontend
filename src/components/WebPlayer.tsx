@@ -405,7 +405,7 @@ function WebPlayback(props) {
         return (
             <>
                 <div>
-                    <div className="main-wrapper flex justify-center items-center">
+                    <div className={`${selectedTheme === 'dark' ? 'bg-background text-foreground' : 'bg-[#748E63] text-[#D0E7D2]'} z-[1000] max-h-screen overflow-y-auto main-wrapper flex justify-center items-center`}>
                         <b> {screenMessage} </b>
                     </div>
                 </div>
@@ -430,7 +430,7 @@ function WebPlayback(props) {
                             <div className="flex flex-col justify-center ml-2 w-fit overflow-x-hidden">
                                 {current_track?.name && current_track?.artists ? (
                                     <div className="overflow-hidden inline truncate">
-                                        {/*If the song length is > 25 characters, scroll the text. Yes i know there are 4 copies
+                                        {/*If the song length is > 25 characters, scroll the text. Yes I know there are 4 copies
                                         thats how it works*/}
                                         {current_track.name.length > 25 ? (
                                             <div className="relative flex overflow-x-hidden">
@@ -520,8 +520,6 @@ function WebPlayback(props) {
                     <div className="flex flex-row justify-center flex-shrink-0 py-2">
                         <div className="flex flex-col justify-center">
                             <div className="flex flex-row justify-center items-center mr-8"> 
-                                {/* {isRecommending() ? (isLastSong() ? <BsHourglassBottom color="#22C55E" size={24}/> : (isFirstSong() ? <BsHourglassTop size={24}/> : <BsHourglassSplit size={24}/>)) : <BsHourglass size={24}/> } */}
-                                {/* New visuals for seed/batch progress */}
                                 {isRecommending() ?
                                  (isLastSong() ? <Stack1 selectedTheme={selectedTheme} /> : (
                                     isFirstSong() ? <Stack4 /> : (
@@ -538,61 +536,57 @@ function WebPlayback(props) {
                                     <Dialog>
                                         <DialogTrigger><BsInfoCircle size={18} /></DialogTrigger>
                                         <DialogContent className={`${selectedTheme === 'dark' ? 'bg-background text-foreground' : 'bg-[#748E63] text-[#D0E7D2]'} z-[1000] max-h-screen overflow-y-auto`}>
-                                            <h1 className="text-foreground text-lg font-semibold">Using MAISTRO</h1>
+                                            <h1 className="text-foreground text-lg font-semibold"><center>M<i>AI</i>STRO FAQ</center></h1>
+                                            <h1 className="text-foreground font-semibold">How does it work?</h1>
                                             <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} text-sm`}>
-                                            MAISTRO works by using your messages as a basis for generating batches of songs. Depending on how much you enjoy the current
-                                                set of songs being recommended will effect future batches. Below we explain how to use and interact with MAISTRO.
+                                            M<i>AI</i>STRO will generate batches of songs based on your messages. Your feedback on the current
+                                                batch will affect future batches.
                                             </p>
-                                            <h1 className="text-md font-semibold">How to Start MAISTRO</h1>
+                                            <h1 className="text-foreground font-semibold">How to start</h1>
                                             <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} text-sm`}>
-                                                To begin using MAISTRO, send a message to it using the text input box. This can be anything, whether it's your current mood or
-                                                you need help doing a certain activity, MAISTRO will try its best to provide the best music for the occasion. Once you are ready
-                                                to send your message, click ENTER or use the green send button to relay your message to MAISTRO.
+                                                Send a message using the text input box; whether it's your current mood, activity, or general vibe, M<i>AI</i>STRO will attempt to provide the best music for the occasion. Once you are ready
+                                                to send, click ENTER or use the green send button.
                                             </p>
-                                            <h1 className="text-md font-semibold">What is a Batch?</h1>
+                                            <h1 className="text-foreground font-semibold">What is a batch?</h1>
                                             <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} text-sm`}>
-                                                A <b>batch</b> is a set of <b>6 to 12</b> songs recommended to you by MAISTRO. The first batch gets created once you send a message to MAISTRO 
-                                                and gets reset everytime you send a new message. To view how far along you are in the current batch, look at the icon to the left of the 
-                                                volume slider, which can be one of the following:
+                                                A batch is a grouping of songs. The first batch gets created once you send a message and is reset upon subsequent messages. To view batch progress, look at the icon to the left of the 
+                                                volume slider:
                                             </p>
                                             <div className="flex flex-row justify-between items-center">
                                                 <div className="flex flex-col items-center">
-                                                    <Stack0 />
-                                                    <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} mt-2 text-center text-sm`}>
-                                                        MAISTRO is <br /> Not Active
-                                                    </p>
-                                                </div>
-                                                <div className="flex flex-col items-center">
                                                     <Stack4 />
                                                     <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} mt-2 text-center text-sm`}>
-                                                        First Song <br /> in Batch
+                                                        First song <br /> in batch
                                                     </p>
                                                 </div>
                                                 <div className="flex flex-col items-center">
                                                     <Stack3 />
                                                     <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} mt-2 text-center text-sm`}>
-                                                        First Half <br /> of Batch
+                                                        First half <br /> of batch
                                                     </p>
                                                 </div>
                                                 <div className="flex flex-col items-center">
                                                     <Stack2 />
                                                     <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} mt-2 text-center text-sm`}>
-                                                        Second Half <br /> of Batch
+                                                        Second half <br /> of batch
                                                     </p>
                                                 </div>
                                                 <div className="flex flex-col items-center">
                                                     <Stack1 />
                                                     <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} mt-2 text-center text-sm`}>
-                                                        Last Song <br /> in Batch
+                                                        Last song <br /> in batch
+                                                    </p>
+                                                </div>
+                                                <div className="flex flex-col items-center">
+                                                    <Stack0 />
+                                                    <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} mt-2 text-center text-sm`}>
+                                                        M<i>AI</i>STRO is <br /> not active
                                                     </p>
                                                 </div>
                                             </div>
-                                            <h1 className="text-md font-semibold">How do Batches Change over Time?</h1>
+                                            <h1 className="text-foreground font-semibold">How do batches change?</h1>
                                             <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} text-sm`}>
-                                            Once MAISTRO is active, there are <b>two factors</b> that determine how songs in 
-                                            future batches are generated. <b>1)</b> How long did you listen to a song (this includes skipping a song) and <b>2)</b> Whether you 
-                                            liked a song by using the thumbs up (👍) and thumbs down (👎) buttons. Using the thumbs up/down buttons have a much greater effect 
-                                            on song recommendations compared to the time listened, so if you really like/dislike a song be sure to use those buttons!.              
+                                            <b>1)</b> Time listened, including skips <br /><b>2)</b> Thumbs up/down buttons <br /> The latter has a greater impact; if you feel strongly about a song, let M<i>AI</i>STRO know.
                                             </p>
                                         </DialogContent>
                                     </Dialog>   
