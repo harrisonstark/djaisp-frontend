@@ -11,16 +11,19 @@ import {BsPlayCircleFill,
         BsHandThumbsUpFill,
         BsHandThumbsDown,
         BsHandThumbsDownFill,
-        BsHourglass,
-        BsHourglassTop,
-        BsHourglassSplit,
-        BsHourglassBottom} 
+        BsInfoCircle} 
 from 'react-icons/bs'
 
-import ChatBox from './ChatBox';
+import {Stack0, Stack1, Stack2, Stack3, Stack4} from '../components/ui/stacks'
+
+import {
+    Dialog,
+    DialogContent,
+    DialogTrigger,
+  } from "../components/ui/dialog"
+
 import { logOut } from '../utils/Utils';
-import { Button } from './ui/button';
-import { Input } from "./ui/input"
+import { toast } from './ui/use-toast';
 
 declare global {
     interface Window {
@@ -36,11 +39,14 @@ const track = {
     album: {
         images: [
             { url: "" }
-        ]
+        ],
+        uri: ""
     },
     artists: [
-        { name: "" }
-    ]
+        { name: "",
+          uri: "" }
+    ],
+    uri: ""
 }
 
 let prev_track = track;
@@ -69,6 +75,8 @@ function WebPlayback(props) {
     const [device_id, setDeviceId] = useState('');
     const [position, setPosition] = useState(0);
     const [duration, setDuration] = useState(0);
+
+    let selectedTheme = props.selectedTheme;
 
     // Callback function to receive the volume value from VolumeSlider
     const handleVolumeChange = (newVolume) => {
@@ -116,6 +124,7 @@ function WebPlayback(props) {
                 }
                 
                 setTrack(state.track_window.current_track);
+                console.log(state.track_window.current_track);
                 setPaused(state.paused);
                 setPosition(state.position);
                 setDuration(state.duration);
@@ -127,7 +136,13 @@ function WebPlayback(props) {
             }));
 
             player.connect();
-
+            window.addEventListener('message', function (event) {
+                const data = event.data;
+                if (data.command === 'messageCommand') {
+                    const message = data.message;
+                    playRandomTracks(message);
+                }
+            });
         };
         
     }, []);
@@ -268,7 +283,7 @@ function WebPlayback(props) {
         .then(async () => {
             trackList = {};
             counter = 0;
-            prev_track = {name: "", album: {images: [{ url: "" }]}, artists: [{ name: "" }]};
+            prev_track = {name: "", album: {images: [{ url: "" }], uri: ""}, artists: [{ name: "", uri: "" }], uri: ""};
             for(let i = 0; i < uriList.length; i++){
                 trackList[i] = await getTrackFeatures(uriList[i].split(':')[2]);
             }
@@ -290,7 +305,10 @@ function WebPlayback(props) {
         axios.get(`http://localhost:8989/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
         .then((response) => {
             if(response.data?.status){
-                console.error("We had a problem, sorry!");
+                toast({
+                    title: "Error: Oops, I dropped my baton, please try again later.",
+                    description: response.statusText,
+                })
             } else {
                 Cookies.set("seedGenres", response.data.seed_genres, { path: "/" });
                 seedNumber = response.data.seed_number;
@@ -354,6 +372,12 @@ function WebPlayback(props) {
         return Object.keys(trackList).length === seedSize && Object.keys(trackList).length === counter + 1;
     }
 
+    // TODO: This needs double checking
+    // i want to see if we are over halfway through the current seed
+    function isOverHalfway(){
+        return counter > (Object.keys(trackList).length / 2) && counter < Object.keys(trackList).length;
+    }
+
     function isFirstSong() {
         return counter === 0;
     }
@@ -372,38 +396,102 @@ function WebPlayback(props) {
         }
     }
 
+    function uriToURL(uri) {
+        const splitURI = uri.split(":");
+        return uri === "" ? "" : splitURI[1] === "artists" ? "artist" : splitURI[1] + "/" + splitURI[2];
+    }
+
     if (!is_active) {
         return (
             <>
                 <div>
-                    <div className="main-wrapper">
+                    <div className={`${selectedTheme === 'dark' ? 'bg-background text-foreground' : 'bg-[#748E63] text-[#D0E7D2]'} z-[1000] max-h-screen overflow-y-auto main-wrapper flex justify-center items-center`}>
                         <b> {screenMessage} </b>
                     </div>
                 </div>
             </>)
     } else {
         return (
-            <div className="z-[1000] sticky top-0 left-0 w-full">
-                <header className=" bg-zinc-800 flex min-[100px]:flex-col md:flex-row min-[100px]:justify-center md:justify-between relative  items-center">
-                    <div className="flex min-[100px]:justify-center md:justify-self-start min-[100px]:w-full md:w-1/5  max-h-24 text-clip items-center">
-                        <div className="flex flex-row px-2 py-2"> 
-                            <div className='rounded-lg'>
-                                {current_track?.album?.images[0] ? (
-                                    <img src={current_track.album.images[0].url} className="min-w-16 max-w-16 h-16 bg-blue-400 object-cover rounded-lg" alt="" />
-                                ) : (<></>)}
-                            </div>
-                            <div className="flex flex-col pl-4 justify-center ">
-                                {current_track?.name && current_track?.artists[0]?.name ? (
-                                    <div className="overflow-hidden">
-                                        <div>{current_track.name}</div>
-                                        <div>{current_track.artists[0].name}</div>
+            <div className="z-[1000] sticky top-0 left-0 w-full" style={{scrollbarGutter: "stable"}}>
+                <header className={`${selectedTheme === 'dark' ? "bg-zinc-800 text-white" : "bg-[#748E63] text-[#D0E7D2]"} flex min-[100px]:flex-col md:flex-row min-[100px]:justify-center md:justify-between relative items-center `}>
+                    <div className="flex min-[100px]:justify-center md:justify-self-start min-[100px]:w-full sm:w-2/3 md:w-1/5  max-h-24 text-clip items-center">
+                        <div className="flex flex-row px-2 w-full max-h-24 min-[100px]:justify-center lg:justify-start"> 
+                            {current_track?.album?.images[0] ? ( 
+                                <div className="p-2 w-20 h-20 flex-shrink-0">
+                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.album.uri)} target="_blank" rel="noreferrer">
+                                    <img
+                                        src={current_track.album.images[0].url}
+                                        className="aspect-1  rounded-lg hover:opacity-70 transition-opacity duration-100"
+                                        alt=""
+                                    />
+                                    </a>
+                                </div>
+                            ) : (<></>)}
+                            <div className="flex flex-col justify-center ml-2 w-fit overflow-x-hidden">
+                                {current_track?.name && current_track?.artists ? (
+                                    <div className="overflow-hidden inline truncate">
+                                        {/*If the song length is > 25 characters, scroll the text. Yes I know there are 4 copies
+                                        thats how it works*/}
+                                        {current_track.name.length > 25 ? (
+                                            <div className="relative flex overflow-x-hidden">
+                                                <div className="animate-marquee whitespace-nowrap">
+                                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank" rel="noreferrer">
+                                                        <span className="hover:underline mx-4">
+                                                        {current_track.name}
+                                                        </span>
+                                                    </a>
+                                                </div>
+                                                <div className="animate-marquee whitespace-nowrap">
+                                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank" rel="noreferrer">
+                                                        <p className="hover:underline mx-4">
+                                                        {current_track.name}
+                                                        </p>
+                                                    </a>
+                                                </div>
+                                                <div className="animate-marquee2 whitespace-nowrap">
+                                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank" rel="noreferrer">
+                                                        <span className="hover:underline">
+                                                        {current_track.name}
+                                                        </span>
+                                                    </a>
+                                                </div>
+                                                <div className="animate-marquee2 whitespace-nowrap">
+                                                    <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank" rel="noreferrer">
+                                                        <span className="hover:underline">
+                                                        {current_track.name}
+                                                        </span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        ) :
+                                        (
+                                            <div>
+                                            <a href={"https://open.spotify.com/" + uriToURL(current_track.uri)} target="_blank" rel="noreferrer">
+                                                <span className="hover:underline">
+                                                {current_track.name}
+                                                </span>
+                                            </a>
+                                            </div>  
+                                        )}
+                                        
+                                    <div>
+                                        {current_track.artists.map((artist, index) => (
+                                        <span key={index}>
+                                            {index > 0 && ', '}
+                                            <a href={"https://open.spotify.com/" + uriToURL(current_track.artists[index].uri)}
+                                                target="_blank" rel="noopener noreferrer" title={artist.name}>
+                                                <span className="hover:underline inline truncate">{artist.name}</span>
+                                            </a>
+                                        </span>
+                                        ))}
+                                    </div>
                                     </div>
                                 ) : (<></>)}
                             </div>
                         </div>
                     </div>
                     <div className="py-2 min-[100px]:w-full md:w-1/2 md:absolute md:start-1/4">
-                        <div className="flex  flex-col w-full items-center justify-center">
+                        <div className="flex flex-col w-full items-center justify-center">
                             <div className='flex flex-row items-center w-full justify-center gap-4 pb-1'>   
                                 <button className="btn-thumbs-down" onClick={() => {toggleThumbs("down")}} >
                                     { isThumbs("down") ? <BsHandThumbsDownFill className="hover:fill-zinc-700" size={24}/> : 
@@ -424,38 +512,89 @@ function WebPlayback(props) {
                                         <BsHandThumbsUp className="hover:fill-zinc-700" size={24}/>}
                                     </button>
                             </div>
-                            <div className='items-center justify-center min-[100px]:w-4/5 sm:w-3/4 md:w-3/5'>
-                                <PositionSlider onPositionChange={handlePositionChange} duration={duration} position={position}/>
+                            <div className='items-center justify-center min-[100px]:w-4/5 sm:w-3/4 md:w-full'>
+                                <PositionSlider selectedTheme={selectedTheme} onPositionChange={handlePositionChange} duration={duration} position={position}/>
                             </div>
                         </div>
                     </div>
                     <div className="flex flex-row justify-center flex-shrink-0 py-2">
                         <div className="flex flex-col justify-center">
                             <div className="flex flex-row justify-center items-center mr-8"> 
-                                {isRecommending() ? (isLastSong() ? <BsHourglassBottom color="#22C55E" size={24}/> : (isFirstSong() ? <BsHourglassTop size={24}/> : <BsHourglassSplit size={24}/>)) : <BsHourglass size={24}/> }
+                                {isRecommending() ?
+                                 (isLastSong() ? <Stack1 selectedTheme={selectedTheme} /> : (
+                                    isFirstSong() ? <Stack4 /> : (
+                                        isOverHalfway() ? <Stack2 selectedTheme={selectedTheme}/> : (
+                                            <Stack3 selectedTheme={selectedTheme}/>
+                                        )
+                                    )
+                                   )
+                                   ) : <Stack0 />}
                                 <div className="flex flex-col w-full pl-3 justify-center">
-                                    <VolumeSlider onVolumeChange={handleVolumeChange} />
+                                    <VolumeSlider onVolumeChange={handleVolumeChange} selectedTheme={selectedTheme} />
+                                </div>
+                                <div className="pl-3 pt-1 self-center hover:opacity-50">
+                                    <Dialog>
+                                        <DialogTrigger><BsInfoCircle size={18} /></DialogTrigger>
+                                        <DialogContent className={`${selectedTheme === 'dark' ? 'bg-background text-foreground' : 'bg-[#748E63] text-[#D0E7D2]'} z-[1000] max-h-screen overflow-y-auto`}>
+                                            <h1 className="text-foreground text-lg font-semibold"><center>M<i>AI</i>STRO FAQ</center></h1>
+                                            <h1 className="text-foreground font-semibold">How does it work?</h1>
+                                            <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} text-sm`}>
+                                            M<i>AI</i>STRO will generate batches of songs based on your messages. Your feedback on the current
+                                                batch will affect future batches.
+                                            </p>
+                                            <h1 className="text-foreground font-semibold">How to start</h1>
+                                            <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} text-sm`}>
+                                                Send a message using the text input box; whether it's your current mood, activity, or general vibe, M<i>AI</i>STRO will attempt to provide the best music for the occasion. Once you are ready
+                                                to send, click ENTER or use the green send button.
+                                            </p>
+                                            <h1 className="text-foreground font-semibold">What is a batch?</h1>
+                                            <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} text-sm`}>
+                                                A batch is a grouping of songs. The first batch gets created once you send a message and is reset upon subsequent messages. To view batch progress, look at the icon to the left of the 
+                                                volume slider:
+                                            </p>
+                                            <div className="flex flex-row justify-between items-center">
+                                                <div className="flex flex-col items-center">
+                                                    <Stack4 />
+                                                    <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} mt-2 text-center text-sm`}>
+                                                        First song <br /> in batch
+                                                    </p>
+                                                </div>
+                                                <div className="flex flex-col items-center">
+                                                    <Stack3 />
+                                                    <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} mt-2 text-center text-sm`}>
+                                                        First half <br /> of batch
+                                                    </p>
+                                                </div>
+                                                <div className="flex flex-col items-center">
+                                                    <Stack2 />
+                                                    <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} mt-2 text-center text-sm`}>
+                                                        Second half <br /> of batch
+                                                    </p>
+                                                </div>
+                                                <div className="flex flex-col items-center">
+                                                    <Stack1 />
+                                                    <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} mt-2 text-center text-sm`}>
+                                                        Last song <br /> in batch
+                                                    </p>
+                                                </div>
+                                                <div className="flex flex-col items-center">
+                                                    <Stack0 />
+                                                    <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} mt-2 text-center text-sm`}>
+                                                        M<i>AI</i>STRO is <br /> not active
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <h1 className="text-foreground font-semibold">How do batches change?</h1>
+                                            <p className={`${selectedTheme === 'dark' ? 'text-muted-foreground' : 'text-[#D0E7D2]'} text-sm`}>
+                                            <b>1)</b> Time listened, including skips <br /><b>2)</b> Thumbs up/down buttons <br /> The latter has a greater impact; if you feel strongly about a song, let M<i>AI</i>STRO know.
+                                            </p>
+                                        </DialogContent>
+                                    </Dialog>   
                                 </div>
                             </div>
                         </div>
                     </div>
                 </header>
-                {/* <div className="flex flex-row items-center mb-2 w-full flex-wrap">
-                    <div className="flex flex-col justify-left mx-2 mt-2">
-                        <ChatBox onSendMessage={(message) => { message !== "" && playRandomTracks(message) }}/>
-                    </div>
-                    <div className="flex flex-col justify-right mx-2 mt-2">
-                        <Button onClick={() => {playTracks(["spotify:track:3TGRqZ0a2l1LRblBkJoaDx"]) }}>CMM</Button>
-                    </div>
-                </div>
-                <div className="flex flex-row justify-left items-center w-full"> 
-                    <div className="flex flex-col mx-2 mb-2">
-                        <div className="text-gray-500 text-sm">
-                            DEBUG: We are on seed number {seedNumber}, track {counter + 1} / {Object.keys(trackList).length}
-                        </div>
-                    </div>
-                </div> */}
-                
             </div>
         );
     }

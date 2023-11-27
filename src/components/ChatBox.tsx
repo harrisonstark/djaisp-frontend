@@ -4,8 +4,10 @@ const ChatBox = ({ onSendMessage }) => {
   const [message, setMessage] = useState('');
 
   const handleSendMessage = async () => {
-    onSendMessage(message);
-    setMessage('');
+    if(message.length < 250){
+      onSendMessage(message);
+      setMessage('');
+    }
   };
 
   const handleKeyPress = (e) => {

@@ -1,28 +1,23 @@
 import { UseChatHelpers } from 'ai/react'
-import * as React from 'react'
+import React from "react"
 import Textarea from 'react-textarea-autosize'
-
 import { Button } from '../ui/button'
 import { GoPaperAirplane } from 'react-icons/go'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  TooltipProvider
-} from '../ui/tooltip'
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '../ui/tooltip'
 import { useEnterSubmit } from '../../lib/hooks/use-enter-submit'
 
-export interface PromptProps
-  extends Pick<UseChatHelpers, 'input' | 'setInput'> {
+export interface PromptProps extends Pick<UseChatHelpers, 'input' | 'setInput'> {
   onSubmit: (value: string) => Promise<void>
-  isLoading: boolean
+  isLoading: boolean,
+  selectedTheme: string,
 }
 
 export function PromptForm({
   onSubmit,
   input,
   setInput,
-  isLoading
+  isLoading,
+  selectedTheme
 }: PromptProps) {
   const { formRef, onKeyDown } = useEnterSubmit()
   const inputRef = React.useRef<HTMLTextAreaElement>(null)
@@ -33,53 +28,51 @@ export function PromptForm({
     }
   }, [])
 
+  const maxTextLength = 400; // Set your desired maximum length
 
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const inputValue = e.target.value;
+
+    // Check if the input value exceeds the maximum length
+    if (inputValue.length <= maxTextLength) {
+      setInput(inputValue);
+    }
+  };
+
+
+  function scrollToBottom(){
+    window.scrollTo(0, document.body.scrollHeight || document.documentElement.scrollHeight);
+  }
 
   return (
     <form
       onSubmit={async e => {
-        console.log("Text Input: " + input)
         e.preventDefault()
-        if (!input?.trim()) {
+        if (isLoading || !input?.trim()) {
           return
         }
+        scrollToBottom();
+        window.postMessage({ command: 'messageCommand', message: input }, '*');
         setInput('')
         await onSubmit(input)
       }}
       ref={formRef}
     >
-      <div className="flex justify-between gap-2 items-center max-h-60 w-full flex-row overflow-hidden bg-background px-2 sm:rounded-md sm:border sm:px-2">
-        {/* WE DO NOT NEED NEW CHATS ATM */}
-        {/* <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              onClick={e => {
-                e.preventDefault()
-                router.refresh()
-                router.push('/')
-              }}
-              className={cn(
-                buttonVariants({ size: 'sm', variant: 'outline' }),
-                'absolute left-0 top-4 h-8 w-8 rounded-full bg-background p-0 sm:left-4'
-              )}
-            >
-              <BsPlusSquare />
-              <span className="sr-only">New Chat</span>
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>New Chat</TooltipContent>
-        </Tooltip> */}
-        <div className="w-full">
+      <div className={`${selectedTheme === 'dark' ? "dark bg-background text-foreground sm:border-foreground" : 
+      "light bg-[#748E63] text-[#D0E7D2] sm:border-background"} flex justify-between gap-2 items-center max-h-60 w-full flex-row  px-2 sm:rounded-md sm:border sm:px-2
+      `}>
+        <div className="w-full flex justify-center items-center">
           <Textarea
             ref={inputRef}
             tabIndex={0}
             onKeyDown={onKeyDown}
             rows={1}
             value={input}
-            onChange={e => setInput(e.target.value)}
-            placeholder="Send a message."
+            onChange={handleChange}
+            placeholder="Type your message..."
             spellCheck={false}
-            className="min-h-[60px] w-full resize-none bg-transparent px-4 py-[1.3rem] focus-within:outline-none sm:text-sm"
+            className={`min-h-[60px] w-full h-full resize-none bg-transparent px-4 py-[1.3rem] focus-within:outline-none sm:text-md
+                        ${selectedTheme === 'dark' ? "placeholder:text-white" : "placeholder:text-[#D0E7D2]"}`}
           />
         </div>
         <div>
@@ -96,7 +89,7 @@ export function PromptForm({
                   <span className="sr-only">Send message</span>
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Send message</TooltipContent>
+              <TooltipContent className={`${selectedTheme === 'dark' ? "dark bg-background text-foreground" : "light bg-[#D0E7D2] text-background"}`}>Send message</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>

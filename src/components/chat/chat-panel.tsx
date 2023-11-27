@@ -3,8 +3,6 @@ import { type UseChatHelpers } from 'ai/react'
 
 import { Button } from '../ui/button'
 import { PromptForm } from './prompt-form'
-import { ButtonScrollToBottom } from './button-scroll-to-bottom'
-import { BsStopCircle } from 'react-icons/bs'
 import { FiRefreshCw } from 'react-icons/fi'
 
 export interface ChatPanelProps
@@ -18,47 +16,40 @@ export interface ChatPanelProps
     | 'input'
     | 'setInput'
   > {
-  id?: string
+  id?: string,
+  currentAppLayout?: string,
+  selectedTheme?: string,
 }
 
 export function ChatPanel({
   id,
   isLoading,
-  stop,
   append,
-  reload,
   input,
   setInput,
-  messages
+  messages,
+  currentAppLayout,
+  selectedTheme
 }: ChatPanelProps) {
   return (
-    <div className="fixed inset-x-0 bottom-0 overflow-auto">
-      <ButtonScrollToBottom />
-      <div className="mx-auto sm:max-w-2xl sm:px-4">
-        <div className="flex h-10 items-center justify-center">
+    <div className="z-[1000] flex justify-center fixed inset-x-0 absolute bottom-0 min-[100px]:max-w-full  sm:max-w-2xl mx-auto">
+      {/* <ButtonScrollToBottom /> */}
+      <div className={`w-full ${selectedTheme === 'dark' ? "dark bg-background" : "light bg-[#D0E7D2]"}
+       ${currentAppLayout === "A" ? "-ml-4" : ""}`}>
+        <div className="flex  items-center justify-center">
           {isLoading ? (
             <Button
               variant="outline"
-              onClick={() => stop()}
               className="bg-background"
+              disabled
             >
-              <BsStopCircle className="mr-2" />
-              Stop generating
+              <FiRefreshCw className="mr-2" />
+              Loading...
             </Button>
-          ) : (
-            messages?.length > 0 && (
-              <Button
-                variant="outline"
-                onClick={() => reload()}
-                className="bg-background"
-              >
-                <FiRefreshCw className="mr-2" />
-                Regenerate response
-              </Button>
-            )
-          )}
+          ) : ((<></>))}
         </div>
-        <div className="space-y-4 border-t bg-background px-4 py-2 shadow-lg sm:rounded-t-xl sm:border md:py-4">
+        <div className={`${selectedTheme === 'dark' ? "dark bg-background" : "light bg-[#D0E7D2]"} h-max`}>
+        <div className={`${currentAppLayout === "A" ? "mb-14 " : ""} space-y-4 border-t shadow-lg sm:rounded-xl sm:border-0`}>
             <PromptForm
                 onSubmit={async value => {
                 await append({
@@ -70,12 +61,14 @@ export function ChatPanel({
                 input={input}
                 setInput={setInput}
                 isLoading={isLoading}
+                selectedTheme={selectedTheme}
             />
             {/* <p className='px-2 text-center text-xs leading-normal text-muted-foreground'>
                 Test Footer
             </p> */}
         </div>
+        </div>
       </div>
-    </div>
+    </div>  
   )
 }

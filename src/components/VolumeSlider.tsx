@@ -6,13 +6,14 @@ import { BsFillVolumeDownFill, BsFillVolumeMuteFill, BsFillVolumeOffFill, BsFill
 // Define the prop type
 interface VolumeSliderProps {
   onVolumeChange: (newVolume: number) => void;
+  selectedTheme: string;
 }
 
 let prevVolume = Cookies.get("prevVolume") || 0.5;
 
 let isMuted = Cookies.get("muted") === "true";
 
-function VolumeSlider({ onVolumeChange }: VolumeSliderProps) {
+function VolumeSlider({ onVolumeChange, selectedTheme }: VolumeSliderProps) {
   const [volume, setVolume] = useState(isMuted ? 0 : Cookies.get("volume") || 0.5); // Initial volume value (0-1)
 
   // Handle volume change
@@ -37,7 +38,7 @@ function VolumeSlider({ onVolumeChange }: VolumeSliderProps) {
       <div onClick={handleToggleMute} className="pr-4">
                 {isMuted ? <BsFillVolumeMuteFill className="hover:fill-zinc-700" size={24} /> : volume === 0 ? <BsFillVolumeOffFill className="hover:fill-zinc-700" size={24} /> : volume <= .2 ? <BsFillVolumeDownFill className="hover:fill-zinc-700" size={24} /> : <BsFillVolumeUpFill className="hover:fill-zinc-700" size={24} />}
       </div>
-      <Slider disabled={isMuted} defaultValue={[volume]} value={[volume]} step={0.01} max={1} onValueChange={handleVolumeChange} className="w-full"/>
+      <Slider selectedTheme={selectedTheme} disabled={isMuted} defaultValue={[volume]} value={[volume]} step={0.01} max={1} onValueChange={handleVolumeChange} className="w-full"/>
     </div>
   );
 }
