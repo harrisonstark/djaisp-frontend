@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 9090
 
 # Define the command to start the app
-CMD ["npm", "run", "start"]
+CMD ["npm", "start"]

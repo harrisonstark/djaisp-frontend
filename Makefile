@@ -4,7 +4,7 @@ build:
 
 # Run the Docker container and enter a bash shell
 run:
-	docker run -it --rm -p 9090:9090 djaisp-frontend
+	docker run -it --rm -p 9090:3000 djaisp-frontend
 
 # Shortcut to build, run, install, and start the app in development mode
 start: build run

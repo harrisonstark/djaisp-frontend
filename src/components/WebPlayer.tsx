@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import VolumeSlider from './VolumeSlider';
@@ -75,6 +75,7 @@ function WebPlayback(props) {
     const [device_id, setDeviceId] = useState('');
     const [position, setPosition] = useState(0);
     const [duration, setDuration] = useState(0);
+    const playerRef = useRef(null);
 
     let selectedTheme = props.selectedTheme;
 
@@ -93,6 +94,14 @@ function WebPlayback(props) {
         setPosition(newPosition);
     };
 
+    function handleMessageEvent(event) {
+        const data = event.data;
+        if (data.command === 'messageCommand') {
+            const message = data.message;
+            playRandomTracks(message);
+        }
+    }
+
     // MAKE SPOTIFY PLAYER
     useEffect(() => {
         const script = document.createElement("script");
@@ -109,7 +118,8 @@ function WebPlayback(props) {
                 volume: Cookies.get("volume") || 0.5
             });
             setPlayer(player);
-
+            playerRef.current = player;
+            
             player.addListener('ready', ({ device_id }) => {
                 setDeviceId(device_id);
             });
@@ -124,7 +134,6 @@ function WebPlayback(props) {
                 }
                 
                 setTrack(state.track_window.current_track);
-                console.log(state.track_window.current_track);
                 setPaused(state.paused);
                 setPosition(state.position);
                 setDuration(state.duration);
@@ -136,15 +145,25 @@ function WebPlayback(props) {
             }));
 
             player.connect();
-            window.addEventListener('message', function (event) {
-                const data = event.data;
-                if (data.command === 'messageCommand') {
-                    const message = data.message;
-                    playRandomTracks(message);
-                }
-            });
+            player.activateElement();
+            window.addEventListener('message', handleMessageEvent);
         };
-        
+
+        return () => {
+            const player = playerRef.current;
+            if(player){
+                player.pause();
+                player.removeListener('ready');
+                player.removeListener('not_ready');
+                player.removeListener('player_state_changed');
+                window.removeEventListener('message', handleMessageEvent);
+                player.disconnect();
+            }
+            if (counting) {
+                clearInterval(counting);
+                counting = null;
+            }
+        }
     }, []);
     
     let counting;
@@ -178,16 +197,6 @@ function WebPlayback(props) {
         stop(is_paused);
       };
     }, [is_paused]);
-
-    useEffect(() => {
-        function cleanUp() {
-            if(player){
-                player.pause();
-                player.disconnect();
-            }
-        }
-          return () => cleanUp();
-      }, []);
 
     useEffect(() => {
         try {

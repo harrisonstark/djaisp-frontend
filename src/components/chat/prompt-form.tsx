@@ -59,7 +59,7 @@ export function PromptForm({
       ref={formRef}
     >
       <div className={`${selectedTheme === 'dark' ? "dark bg-background text-foreground sm:border-foreground" : 
-      "light bg-[#748E63] text-[#D0E7D2] sm:border-background"} flex justify-between gap-2 items-center max-h-60 w-full flex-row  px-2 sm:rounded-md sm:border sm:px-2
+      "light bg-[#748E63] text-[#D0E7D2] sm:border-background"} flex justify-between gap-2 items-center max-h-60 w-full flex-row px-3 sm:rounded-md sm:border sm:px-3
       `}>
         <div className="w-full flex justify-center items-center">
           <Textarea

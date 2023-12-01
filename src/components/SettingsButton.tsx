@@ -27,25 +27,24 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
         <div className="z-[100] w-full h-full flex justify-center items-center">
             <Sheet>
                 <SheetTrigger>
-                    <Button variant="outline" 
-                    className={`w-full h-full  p-4
-                                ${selectedTheme === 'dark' ? 'hover:bg-zinc-900 opacity-70 hover:opacity-100 border-2 border-primary'
-                                 : 'bg-[#D0E7D2] hover:bg-[#79AC78] opacity-70 hover:opacity-100 border-2 border-black'}`}>
+                    <div className={`w-full h-full p-4 rounded-md
+                        ${selectedTheme === 'dark' ? 'hover:bg-zinc-900 opacity-70 hover:opacity-100 border-2 border-primary'
+                        : 'bg-[#D0E7D2] hover:bg-[#79AC78] opacity-70 hover:opacity-100 border-2 border-black'}`}>
                         <BsFillGearFill 
                             fill={`${selectedTheme === 'dark' ? 'white' : 'black'}`}
                             size={32}
                         />
-                    </Button>
+                    </div>
                 </SheetTrigger>
                 <SheetContent className={`${selectedTheme === 'dark' ? 'light bg-foreground' : 'bg-[#D0E7D2]'}
                        z-[1000]`}>
                     <SheetHeader>
                     <SheetTitle className={`${selectedTheme === 'dark' ? 'light' : 'dark'}
                         text-background`}>
-                            MAISTRO Settings
+                            M<i>AI</i>STRO Settings
                     </SheetTitle>
                     <SheetDescription>
-                        Modify the look and feel of MAISTRO here.
+                        Modify the look and feel of M<i>AI</i>STRO here.
                     </SheetDescription>
                     </SheetHeader>
                     <div className="relative h-full">
