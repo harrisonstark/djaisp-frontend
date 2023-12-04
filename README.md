@@ -1,6 +1,6 @@
-# djaisp-frontend
+# maistro-frontend
 
-DJ AI Senior Project Frontend
+MAISTRO Frontend
 
 # Starting the program
 
