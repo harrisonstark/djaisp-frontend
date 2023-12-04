@@ -413,8 +413,8 @@ function WebPlayback(props) {
     if (!is_active) {
         return (
             <>
-                <div>
-                    <div className={`${selectedTheme === 'dark' ? 'bg-background text-foreground' : 'bg-[#748E63] text-[#D0E7D2]'} z-[1000] max-h-screen overflow-y-auto main-wrapper flex justify-center items-center`}>
+                <div className="w-full">
+                    <div className={`flex flex-row justify-center items-center ${selectedTheme === 'dark' ? 'bg-zinc-800 text-white' : 'bg-[#748E63] text-[#D0E7D2]'} z-[1000] h-20 overflow-y-auto main-wrapper flex justify-center items-center`}>
                         <b> {screenMessage} </b>
                     </div>
                 </div>
@@ -422,7 +422,7 @@ function WebPlayback(props) {
     } else {
         return (
             <div className="z-[1000] sticky top-0 left-0 w-full" style={{scrollbarGutter: "stable"}}>
-                <header className={`${selectedTheme === 'dark' ? "bg-zinc-800 text-white" : "bg-[#748E63] text-[#D0E7D2]"} flex min-[100px]:flex-col md:flex-row min-[100px]:justify-center md:justify-between relative items-center `}>
+                <header className={`${selectedTheme === 'dark' ? "bg-zinc-800 text-white" : "bg-[#748E63] text-[#D0E7D2]"} flex min-[100px]:flex-col md:flex-row min-[100px]:justify-center md:justify-between relative items-center`}>
                     <div className="flex min-[100px]:justify-center md:justify-self-start min-[100px]:w-full sm:w-2/3 md:w-1/5  max-h-24 text-clip items-center">
                         <div className="flex flex-row px-2 w-full max-h-24 min-[100px]:justify-center lg:justify-start"> 
                             {current_track?.album?.images[0] ? ( 

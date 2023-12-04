@@ -51,32 +51,31 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
                         <h1 className={`${selectedTheme === 'dark' ? 'light' : 'dark'}
                         text-background text-medium font-bold pt-10 pb-4`}>Change App Layout</h1>
                         <div className="grid grid-cols-2 grid-row-1 gap-4 text-background">
-                            <div className={`border-2 border-background rounded-lg h-20 hover:-translate-y-1 duration-200
-                                ${selectedLayout === 'A' ? 'border-primary' : 
-                                (selectedTheme === 'dark' ? 'border-background' : 'border-foreground')}`}
+                            <div className={` border-background rounded-lg h-20 hover:-translate-y-1 duration-200`}
                                 onClick={() => handleLayoutClick('A')}
                             >
                                 <TooltipProvider>
                                     <Tooltip>
                                     <TooltipTrigger asChild>
                                        <div className="w-full h-full flex justify-center items-center">
-                                        {selectedTheme === 'dark' ? <DarkLayoutA /> : <LightLayoutA />}
+                                        {selectedTheme === 'dark' ? <DarkLayoutA selectedLayout={selectedLayout} selectedTheme={selectedTheme} /> 
+                                        : <LightLayoutA selectedLayout={selectedLayout} selectedTheme={selectedTheme}/>}
                                        </div>
                                     </TooltipTrigger>
                                     <TooltipContent>Media Player on Top</TooltipContent>
                                     </Tooltip>
                                 </TooltipProvider>
                             </div>
-                            <div className={`border-2 rounded-lg h-20 hover:-translate-y-1 duration-200
-                                ${selectedLayout === 'B' ? 'border-primary' : 
-                                    (selectedTheme === 'dark' ? 'border-background' : 'border-foreground')}`}
+                            <div className={` rounded-lg h-20 hover:-translate-y-1 duration-200
+                                `}
                                 onClick={() => handleLayoutClick('B')}
                             >
                                 <TooltipProvider>
                                     <Tooltip>
                                     <TooltipTrigger asChild>
                                        <div className="w-full h-full flex justify-center items-center">
-                                        {selectedTheme === 'dark' ? <DarkLayoutB /> : <LightLayoutB />}
+                                        {selectedTheme === 'dark' ? <DarkLayoutB selectedLayout={selectedLayout} selectedTheme={selectedTheme}/> 
+                                        : <LightLayoutB selectedLayout={selectedLayout} selectedTheme={selectedTheme}/>}
                                        </div>
                                     </TooltipTrigger>
                                     <TooltipContent>Media Player on Bottom</TooltipContent>
@@ -106,7 +105,7 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
                         <div className="mb-14 w-full bottom-0 absolute ">
                             {Cookies.get('profilePicture') !== "" ?
                                 <div className="flex flex-row justify-start items-center mb-4">
-                                    <div className="w-12 h-10">
+                                    <div className="w-12 h-12">
                                         <img 
                                             className={`${selectedTheme === "dark" ? 'border-white' : 'border-black'}
                                             w-full h-full border-2 rounded-lg`}
