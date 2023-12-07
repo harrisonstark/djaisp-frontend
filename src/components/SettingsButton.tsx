@@ -13,6 +13,7 @@ import {Button} from '../components/ui/button';
 import {BsFillGearFill} from 'react-icons/bs';
 import LoginButton from "./SpotifyButton";
 import { LightLayoutA, LightLayoutB, DarkLayoutA, DarkLayoutB } from "./ui/layouts";
+import { BiSolidUserCircle } from "react-icons/bi";
 
 export default function SettingsButton({ selectedLayout, onSelectedLayoutChange, selectedTheme, onSelectedThemeChange }) {
     const handleLayoutClick = (layout) => {
@@ -103,21 +104,30 @@ export default function SettingsButton({ selectedLayout, onSelectedLayoutChange,
                             </div>
                         </div>
                         <div className="mb-14 w-full bottom-0 absolute ">
-                            {Cookies.get('profilePicture') !== "" ?
                                 <div className="flex flex-row justify-start items-center mb-4">
-                                    <div className="w-12 h-12">
-                                        <img 
-                                            className={`${selectedTheme === "dark" ? 'border-white' : 'border-black'}
-                                            w-full h-full border-2 rounded-lg`}
-                                            src={Cookies.get("profilePicture")}
-                                            alt="profile"
-                                         />
+                                    <div className="w-12 h-12 hover:opacity-80 transition-opacity duration-100">
+                                    {Cookies.get('profilePicture') !== "" ?
+                                        <a href={"https://open.spotify.com/user/" + Cookies.get('user_id')} target="_blank" rel="noreferrer">
+                                            <img 
+                                                className={`${selectedTheme === "dark" ? 'border-white' : 'border-black'}
+                                                w-full h-full border-2 rounded-lg`}
+                                                src={Cookies.get("profilePicture")}
+                                                alt="profile"
+                                            />
+                                        </a>
+                                    : 
+                                        <div className={`flex w-12 h-12 hover:opacity-80 transition-opacity duration-100 items-center justify-center rounded-lg ${selectedTheme === "dark" ? "bg-primary border-2" : "bg-[#748E63] border-[#22311d] border-2"}`}>
+                                            <a href={"https://open.spotify.com/user/" + Cookies.get('user_id')} target="_blank" rel="noreferrer">
+                                                <BiSolidUserCircle size={24} fill={`${selectedTheme === "dark" ? "black" : "#22311d"}`} />
+                                            </a>
+                                        </div>}
                                     </div>
-                                    <div className={`${selectedTheme === "dark" ? 'text-white' : 'text-black'} pl-4`}>
-                                        {Cookies.get('user_id')}
+                                    <div className={`${selectedTheme === "dark" ? 'text-white' : 'text-black'} hover:underline hover:opacity-80 transition-opacity duration-100 pl-4`}>
+                                        <a href={"https://open.spotify.com/user/" + Cookies.get('user_id')} target="_blank" rel="noreferrer">
+                                            {Cookies.get('user_id')}
+                                        </a>
                                     </div>
                                 </div>
-                            : <div />}
                             <LoginButton selectedTheme={selectedTheme} />
                         </div>
                     </div>

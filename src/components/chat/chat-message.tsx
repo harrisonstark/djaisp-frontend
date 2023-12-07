@@ -20,13 +20,13 @@ export function ChatMessage({ message, selectedTheme, ...props }: ChatMessagePro
     >
       <div className="flex h-8 w-8 items-center justify-center">
         {/* If message is user and they have profile pic */}
-        {(message.role === 'user' && Cookies.get("profilePicture") === "dog") ? (
+        {(message.role === 'user' && Cookies.get("profilePicture")) ? (
           <div className={`flex w-full h-full items-center justify-center `}>
             <img className={`h-8 w-8 rounded-lg ${selectedTheme === "dark" ? "border-2 rounded-lg" : "border-[#22311d] border-2"}`} src={Cookies.get("profilePicture")} alt="from user's profile"/>
           </div>
         ) : 
         /* Message is user but they do not have profile pic */
-        (message.role === 'user' && Cookies.get("profilePicture") !== "") ? 
+        (message.role === 'user' && !Cookies.get("profilePicture")) ? 
           <div className={`flex w-8 h-8 items-center justify-center rounded-lg ${selectedTheme === "dark" ? "bg-primary border-2" : "bg-[#748E63] border-[#22311d] border-2"}`}>
             <BiSolidUserCircle fill={`${selectedTheme === "dark" ? "black" : "#22311d"}`} />
           </div>

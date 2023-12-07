@@ -65,6 +65,10 @@ const seedSizeFromCookie = Cookies.get("seedSize") || 0;
 
 let seedSize = parseInt(seedSizeFromCookie);
 
+const initialPositionFromCookie = Cookies.get("position") || 0;
+
+let initialPosition = parseInt(initialPositionFromCookie);
+
 let screenMessage = "Instance not active. Transfer your playback using your Spotify app if it does not automatically.";
 
 function WebPlayback(props) {
@@ -73,7 +77,7 @@ function WebPlayback(props) {
     const [player, setPlayer] = useState(undefined);
     const [current_track, setTrack] = useState(track);
     const [device_id, setDeviceId] = useState('');
-    const [position, setPosition] = useState(0);
+    const [position, setPosition] = useState(initialPosition);
     const [duration, setDuration] = useState(0);
     const playerRef = useRef(null);
 
@@ -158,6 +162,7 @@ function WebPlayback(props) {
                 player.removeListener('player_state_changed');
                 window.removeEventListener('message', handleMessageEvent);
                 player.disconnect();
+                Cookies.set("position", position, { path: "/" });
             }
             if (counting) {
                 clearInterval(counting);
@@ -311,7 +316,7 @@ function WebPlayback(props) {
         } else {
             queryParams += `message=${message}`
         }
-        axios.get(`http://localhost:8989/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
+        axios.get(`https://kl9cr3ihgf.loclx.io/get_recommendation?user_id=${user_id}&email=${email}&${queryParams}`)
         .then((response) => {
             if(response.data?.status){
                 toast({
@@ -353,7 +358,7 @@ function WebPlayback(props) {
                 screenMessage = "Loading...";
             } else if(error.message === "Request failed with status code 401"){
                 screenMessage = "Refreshing token, please wait...";
-                axios.put(`http://localhost:8989/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
+                axios.put(`https://kl9cr3ihgf.loclx.io/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`)
                 .then(() => {
                     window.location.href = "/";
                 })
@@ -381,8 +386,6 @@ function WebPlayback(props) {
         return Object.keys(trackList).length === seedSize && Object.keys(trackList).length === counter + 1;
     }
 
-    // TODO: This needs double checking
-    // i want to see if we are over halfway through the current seed
     function isOverHalfway(){
         return counter > (Object.keys(trackList).length / 2) && counter < Object.keys(trackList).length;
     }
