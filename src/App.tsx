@@ -25,18 +25,18 @@ function App({ id, initialMessages, className }: ChatProps) {
   const [token, setToken] = useState('');
 
   async function refreshToken() {
-    await axios.put(`http://localhost:8989/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
+    await axios.put(`https://maistrobackend.harrisonstark.net/authorize?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
     getToken();
   }
 
   async function getToken() {
-    const response = await axios.get(`http://localhost:8989/get_credentials?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
+    const response = await axios.get(`https://maistrobackend.harrisonstark.net/get_credentials?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
     setToken(response.data["access_token"]);
     getProfilePictureURL();
   }
 
   async function getProfilePictureURL() {
-    const response = await axios.get(`http://localhost:8989/get_user_information?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
+    const response = await axios.get(`https://maistrobackend.harrisonstark.net/get_user_information?user_id=${Cookies.get('user_id')}&email=${Cookies.get('email')}`);
     Cookies.set("profilePicture", response.data["url"], "/");
   }
 
@@ -99,7 +99,7 @@ function App({ id, initialMessages, className }: ChatProps) {
         id,
         previewToken
       },
-      api: "http://localhost:8989/chat",
+      api: "https://maistrobackend.harrisonstark.net/chat",
       onResponse(response) {
         if (response.status === 401) {
             // showToastError(response.statusText);
