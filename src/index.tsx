@@ -7,7 +7,7 @@ import Redirect from './Redirect';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 
-axios.defaults.headers.common['HSTOKEN'] = process.env.HSTOKEN;
+axios.defaults.headers.common['HSTOKEN'] = process.env.REACT_APP_HSTOKEN;
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <Router>
