@@ -99,6 +99,9 @@ function App({ id, initialMessages, className }: ChatProps) {
         id,
         previewToken
       },
+      headers: {
+        "Authorization": process.env.REACT_APP_HSTOKEN
+      },
       api: "https://maistrobackend.harrisonstark.net/chat",
       onResponse(response) {
         if (response.status === 401) {
